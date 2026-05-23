@@ -4,27 +4,21 @@ import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
 function MapComponent() {
   const [scooters, setScooters] = useState([]);
   const [selectedScooter, setSelectedScooter] = useState(null);
-
   const [rideStarted, setRideStarted] = useState(false);
-
   const [seconds, setSeconds] = useState(0);
-
   const [cost, setCost] = useState(0);
-
-  const [finishedRide, setFinishedRide] =
-    useState(null);
-
-  const [rideHistory, setRideHistory] =
-    useState([]);
-
+  const [finishedRide, setFinishedRide] = useState(null);
+  const [rideHistory, setRideHistory] = useState([]);
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] =
-    useState("success");
+  const [messageType, setMessageType] = useState("success");
 
-  const showMessage = (
-    text,
-    type = "success"
-  ) => {
+  const statusText = {
+    available: "Свободен",
+    busy: "Занят",
+    repair: "Ремонт",
+  };
+
+  const showMessage = (text, type = "success") => {
     setMessage(text);
     setMessageType(type);
 
@@ -33,27 +27,19 @@ function MapComponent() {
     }, 3000);
   };
 
-  const statusText = {
-    available: "Свободен",
-    busy: "Занят",
-    repair: "Ремонт",
-  };
-
   const loadScooters = async () => {
-    const res = await fetch(
-      "http://localhost:5000/scooters"
-    );
-
+    const res = await fetch("http://localhost:5000/scooters");
     const data = await res.json();
 
     setScooters(data);
 
     if (!selectedScooter && data.length > 0) {
       setSelectedScooter(data[0]);
-    } else if (selectedScooter) {
-      const updated = data.find(
-        (s) => s.id === selectedScooter.id
-      );
+      return;
+    }
+
+    if (selectedScooter) {
+      const updated = data.find((s) => s.id === selectedScooter.id);
 
       if (updated) {
         setSelectedScooter(updated);
@@ -61,22 +47,19 @@ function MapComponent() {
     }
   };
 
-const loadRides = async () => {
-  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const loadRides = async () => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
 
-  if (!currentUser) {
-    setRideHistory([]);
-    return;
-  }
+    if (!currentUser) {
+      setRideHistory([]);
+      return;
+    }
 
-  const res = await fetch(
-    `http://localhost:5000/rides/${currentUser.id}`
-  );
+    const res = await fetch(`http://localhost:5000/rides/${currentUser.id}`);
+    const data = await res.json();
 
-  const data = await res.json();
-
-  setRideHistory(data);
-};
+    setRideHistory(data);
+  };
 
   useEffect(() => {
     loadScooters();
@@ -95,204 +78,139 @@ const loadRides = async () => {
 
   useEffect(() => {
     if (rideStarted) {
-      const minutes = Math.max(
-        1,
-        Math.ceil(seconds / 60)
-      );
-
+      const minutes = Math.max(1, Math.ceil(seconds / 60));
       setCost(40 + minutes * 7);
     }
   }, [seconds, rideStarted]);
 
-  const updateScooterStatus = async (
-    id,
-    status
-  ) => {
-    await fetch(
-      `http://localhost:5000/scooters/${id}/status`,
-      {
-        method: "PUT",
+  const updateScooterStatus = async (id, status) => {
+    const response = await fetch(`http://localhost:5000/scooters/${id}/status`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
 
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
+    const data = await response.json();
 
-        body: JSON.stringify({
-          status,
-        }),
-      }
-    );
+    if (!response.ok) {
+      showMessage(data.message || "Ошибка изменения статуса", "error");
+      return false;
+    }
 
-    await loadScooters();
+    if (data.scooter) {
+      setSelectedScooter(data.scooter);
+
+      setScooters((prev) =>
+        prev.map((scooter) =>
+          scooter.id === data.scooter.id ? data.scooter : scooter
+        )
+      );
+    }
+
+    return true;
   };
 
-const startRide = async () => {
-  const currentUser = JSON.parse(
-    localStorage.getItem("user")
-  );
+  const startRide = async () => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
 
-  if (!currentUser) {
-    showMessage(
-      "Войдите в аккаунт, чтобы начать поездку",
-      "error"
-    );
+    if (!currentUser) {
+      showMessage("Войдите в аккаунт, чтобы начать поездку", "error");
+      return;
+    }
 
-    return;
-  }
+    if (selectedScooter.status !== "available") {
+      showMessage("Этот самокат сейчас недоступен", "error");
+      return;
+    }
 
-  if (
-    selectedScooter.status !==
-    "available"
-  ) {
-    showMessage(
-      "Этот самокат сейчас недоступен",
-      "error"
-    );
+    if (currentUser.balance < 50) {
+      showMessage("Недостаточно средств на балансе", "error");
+      return;
+    }
 
-    return;
-  }
+    const updated = await updateScooterStatus(selectedScooter.id, "busy");
 
-  if (currentUser.balance < 50) {
-    showMessage(
-      "Недостаточно средств на балансе",
-      "error"
-    );
+    if (!updated) {
+      return;
+    }
 
-    return;
-  }
+    setRideStarted(true);
+    setSeconds(0);
+    setCost(47);
+    setFinishedRide(null);
 
-  await updateScooterStatus(
-    selectedScooter.id,
-    "busy"
-  );
-
-  setRideStarted(true);
-
-  setSeconds(0);
-
-  setCost(47);
-
-  setFinishedRide(null);
-
-  showMessage(
-    "Поездка началась",
-    "success"
-  );
-};
+    showMessage("Поездка началась", "success");
+  };
 
   const finishRide = async () => {
-    const res = await fetch(
-      "http://localhost:5000/rides",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify({
-          scooterId:
-            selectedScooter.id,
-
-          duration: seconds,
-
-          cost,
-
-          userId: JSON.parse(
-            localStorage.getItem("user")
-          )?.id,
-        }),
-      }
-    );
+    const res = await fetch("http://localhost:5000/rides", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        scooterId: selectedScooter.id,
+        duration: seconds,
+        cost,
+        userId: JSON.parse(localStorage.getItem("user"))?.id,
+      }),
+    });
 
     const savedRide = await res.json();
 
     if (!res.ok) {
-      showMessage(
-        savedRide.message ||
-          "Ошибка завершения поездки",
-        "error"
-      );
-
+      showMessage(savedRide.message || "Ошибка завершения поездки", "error");
       return;
     }
 
-    const savedUser = JSON.parse(
-      localStorage.getItem("user")
-    );
+    const savedUser = JSON.parse(localStorage.getItem("user"));
 
     localStorage.setItem(
       "user",
-
       JSON.stringify({
         ...savedUser,
-
         balance: savedRide.balance,
       })
     );
 
-    await updateScooterStatus(
-      selectedScooter.id,
-      "available"
-    );
+    const finishedScooterModel = selectedScooter.model;
+
+    await updateScooterStatus(selectedScooter.id, "available");
 
     setRideStarted(false);
 
     setFinishedRide({
-      scooter: selectedScooter.model,
-
+      scooter: finishedScooterModel,
       time: savedRide.ride.duration,
-
       price: savedRide.ride.cost,
     });
 
     await loadRides();
 
-    showMessage(
-      "Поездка завершена",
-      "success"
-    );
-
-    window.location.reload();
+    showMessage("Поездка завершена", "success");
   };
 
   if (!selectedScooter) {
-    return (
-      <div className="loading">
-        Загрузка карты...
-      </div>
-    );
+    return <div className="loading">Загрузка карты...</div>;
   }
 
   return (
     <div>
-      {message && (
-        <div
-          className={`map-message ${messageType}`}
-        >
-          {message}
-        </div>
-      )}
+      {message && <div className={`map-message ${messageType}`}>{message}</div>}
 
       <div className="rental-wrapper">
         <div className="map-box">
           <YMaps
             query={{
-              apikey:
-                "656abd51-55c6-4c8a-821b-2fce7bdf5dc4",
-
+              apikey: "656abd51-55c6-4c8a-821b-2fce7bdf5dc4",
               lang: "ru_RU",
             }}
           >
             <Map
               state={{
-                center: [
-                  selectedScooter.latitude,
-                  selectedScooter.longitude,
-                ],
-
+                center: [selectedScooter.latitude, selectedScooter.longitude],
                 zoom: 11,
               }}
               width="100%"
@@ -301,35 +219,18 @@ const startRide = async () => {
               {scooters.map((scooter) => (
                 <Placemark
                   key={scooter.id}
-                  geometry={[
-                    scooter.latitude,
-                    scooter.longitude,
-                  ]}
-                  onClick={() =>
-                    setSelectedScooter(
-                      scooter
-                    )
-                  }
+                  geometry={[scooter.latitude, scooter.longitude]}
+                  onClick={() => setSelectedScooter(scooter)}
                   properties={{
-                    hintContent:
-                      scooter.model,
+                    hintContent: scooter.model,
                   }}
                   options={{
-                    iconLayout:
-                      "default#image",
-
-                    iconImageHref:
-                      "/scooter.png",
-
+                    iconLayout: "default#image",
+                    iconImageHref: "/scooter.png",
                     iconImageSize:
-                      selectedScooter.id ===
-                      scooter.id
-                        ? [58, 58]
-                        : [46, 46],
-
+                      selectedScooter.id === scooter.id ? [58, 58] : [46, 46],
                     iconImageOffset:
-                      selectedScooter.id ===
-                      scooter.id
+                      selectedScooter.id === scooter.id
                         ? [-29, -29]
                         : [-23, -23],
                   }}
@@ -343,101 +244,62 @@ const startRide = async () => {
           <div className="panel-header">
             <span
               className={`status-dot ${
-                selectedScooter.status ===
-                "available"
+                selectedScooter.status === "available"
                   ? "green"
-                  : selectedScooter.status ===
-                    "busy"
+                  : selectedScooter.status === "busy"
                   ? "red"
                   : "orange"
               }`}
             ></span>
 
-            <span>
-              {
-                statusText[
-                  selectedScooter.status
-                ]
-              }
-            </span>
+            <span>{statusText[selectedScooter.status]}</span>
           </div>
 
-          <h3>
-            Самокат{" "}
-            {selectedScooter.model}
-          </h3>
+          <h3>Самокат {selectedScooter.model}</h3>
 
           <div className="info-grid">
             <div>
               <span>Заряд</span>
-
-              <strong>
-                {selectedScooter.charge}%
-              </strong>
+              <strong>{selectedScooter.charge}%</strong>
             </div>
 
             <div>
               <span>Старт</span>
-
               <strong>40 ₽</strong>
             </div>
 
             <div>
               <span>Минута</span>
-
               <strong>7 ₽</strong>
             </div>
 
             <div>
               <span>Статус</span>
-
-              <strong>
-                {
-                  statusText[
-                    selectedScooter.status
-                  ]
-                }
-              </strong>
+              <strong>{statusText[selectedScooter.status]}</strong>
             </div>
           </div>
 
           {!rideStarted ? (
-            <button
-              className="start-button"
-              onClick={startRide}
-            >
+            <button className="start-button" onClick={startRide}>
               Начать поездку
             </button>
           ) : (
             <div className="ride-panel">
-              <div className="ride-header">
-                Поездка активна
-              </div>
+              <div className="ride-header">Поездка активна</div>
 
               <div className="ride-info">
                 <div className="ride-row">
                   <span>Время</span>
-
-                  <strong>
-                    {seconds} сек.
-                  </strong>
+                  <strong>{seconds} сек.</strong>
                 </div>
 
                 <div className="ride-row">
-                  <span>
-                    Стоимость
-                  </span>
-
-                  <strong>
-                    {cost} ₽
-                  </strong>
+                  <span>Стоимость</span>
+                  <strong>{cost} ₽</strong>
                 </div>
               </div>
 
-              <button
-                className="finish-button"
-                onClick={finishRide}
-              >
+              <button className="finish-button" onClick={finishRide}>
                 Завершить поездку
               </button>
             </div>
@@ -445,42 +307,22 @@ const startRide = async () => {
 
           {finishedRide && (
             <div className="finished-ride">
-              <div className="finished-header">
-                Поездка завершена
-              </div>
+              <div className="finished-header">Поездка завершена</div>
 
               <div className="finished-info">
                 <div className="finished-row">
-                  <span>
-                    Самокат
-                  </span>
-
-                  <strong>
-                    {
-                      finishedRide.scooter
-                    }
-                  </strong>
+                  <span>Самокат</span>
+                  <strong>{finishedRide.scooter}</strong>
                 </div>
 
                 <div className="finished-row">
                   <span>Время</span>
-
-                  <strong>
-                    {finishedRide.time} сек.
-                  </strong>
+                  <strong>{finishedRide.time} сек.</strong>
                 </div>
 
                 <div className="finished-row">
-                  <span>
-                    Стоимость
-                  </span>
-
-                  <strong>
-                    {
-                      finishedRide.price
-                    }{" "}
-                    ₽
-                  </strong>
+                  <span>Стоимость</span>
+                  <strong>{finishedRide.price} ₽</strong>
                 </div>
               </div>
             </div>
@@ -488,67 +330,35 @@ const startRide = async () => {
         </aside>
       </div>
 
-      <section
-        id="rides"
-        className="history-section"
-      >
+      <section id="rides" className="history-section">
         <div className="history-header">
-          <h2>
-            История поездок
-          </h2>
+          <h2>История поездок</h2>
         </div>
 
         {rideHistory.length === 0 ? (
-          <div className="empty-history">
-            Завершённых поездок пока
-            нет
-          </div>
+          <div className="empty-history">Завершённых поездок пока нет</div>
         ) : (
           <div className="history-list">
             {rideHistory.map((ride) => (
-              <div
-                className="history-card"
-                key={ride.id}
-              >
+              <div className="history-card" key={ride.id}>
                 <div>
                   <span>Самокат</span>
-
-                  <strong>
-                    {
-                      ride.Scooter
-                        ?.model
-                    }
-                  </strong>
+                  <strong>{ride.Scooter?.model || "Неизвестно"}</strong>
                 </div>
 
                 <div>
                   <span>Время</span>
-
-                  <strong>
-                    {ride.duration} сек.
-                  </strong>
+                  <strong>{ride.duration} сек.</strong>
                 </div>
 
                 <div>
-                  <span>
-                    Стоимость
-                  </span>
-
-                  <strong>
-                    {ride.cost} ₽
-                  </strong>
+                  <span>Стоимость</span>
+                  <strong>{ride.cost} ₽</strong>
                 </div>
 
                 <div>
                   <span>Дата</span>
-
-                  <strong>
-                    {new Date(
-                      ride.createdAt
-                    ).toLocaleString(
-                      "ru-RU"
-                    )}
-                  </strong>
+                  <strong>{new Date(ride.createdAt).toLocaleString("ru-RU")}</strong>
                 </div>
               </div>
             ))}
