@@ -1147,3 +1147,416 @@ button:hover {
   font-size: 34px;
   color: #4ade80;
 }
+
+.tariff-alert {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  font-weight: 800;
+  text-align: center;
+}
+
+.admin-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 90px 56px;
+}
+
+.admin-container h1 {
+  text-align: center;
+  font-size: 56px;
+  color: #22c55e;
+  margin-bottom: 36px;
+}
+
+.admin-block {
+  margin-bottom: 34px;
+  padding: 28px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, #121212, #0b0b0b);
+  border: 1px solid #252525;
+  overflow: hidden;
+}
+
+.admin-block h2 {
+  margin: 0 0 22px;
+  color: #22c55e;
+}
+
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.admin-form input,
+.admin-form select {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #333;
+  background: #181818;
+  color: white;
+  font-size: 16px;
+}
+
+.admin-form button {
+  width: 100%;
+}
+
+.tariff-note {
+  margin-top: 18px;
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.admin-scooters {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-scooter-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 150px 120px 170px 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 28px;
+  border-radius: 24px;
+  background: #181818;
+  border: 1px solid #2a2a2a;
+}
+
+.scooter-model {
+  font-size: 42px;
+  font-weight: 900;
+  color: white;
+}
+
+.scooter-charge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.scooter-charge span,
+.scooter-status span {
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.scooter-charge strong {
+  color: white;
+  font-size: 26px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.scooter-status {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scooter-status strong {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.status-available strong {
+  color: #4ade80;
+  text-shadow: 0 0 12px rgba(74, 222, 128, 0.6);
+}
+
+.status-busy strong {
+  color: #ef4444;
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+}
+
+.status-repair strong {
+  color: #f59e0b;
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+}
+
+.admin-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.admin-actions button {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: none;
+  font-size: 15px;
+  font-weight: 900;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.free-btn {
+  background: #4ade80;
+  color: black;
+}
+
+.busy-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.repair-btn {
+  background: #f59e0b;
+  color: white;
+}
+
+.admin-actions .delete-button {
+  background: #dc2626;
+  color: white;
+}
+
+.custom-notification {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 320px;
+  padding: 18px 22px;
+  border-radius: 20px;
+  background: rgba(17, 17, 17, 0.95);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 30px rgba(74, 222, 128, 0.18);
+  animation: notificationShow 0.35s ease;
+}
+
+.notification-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #4ade80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.custom-notification strong {
+  display: block;
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.custom-notification p {
+  margin: 0;
+  color: #a1a1aa;
+  font-size: 15px;
+}
+
+@keyframes notificationShow {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 1100px) {
+  .admin-scooter-card {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+
+  .admin-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-page {
+    padding: 70px 16px;
+  }
+
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-page {
+  max-width: 1180px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.admin-scooter-card {
+  grid-template-columns: 140px 110px 150px minmax(390px, 1fr);
+  gap: 18px;
+  padding: 22px 24px;
+}
+
+.admin-actions {
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.admin-actions button {
+  padding: 13px 15px;
+  font-size: 14px;
+}
+
+.scooter-model {
+  font-size: 28px !important;
+  font-weight: 900 !important;
+
+  min-width: 110px !important;
+}
+
+.scooter-charge {
+  align-items: center;
+}
+
+.scooter-status {
+  align-items: flex-start;
+}
+
+@media (max-width: 1180px) {
+  .admin-scooter-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+
+  margin-bottom: 28px;
+}
+
+.admin-stat-card {
+  padding: 24px;
+  border-radius: 24px;
+
+  background: linear-gradient(180deg, #181818, #111111);
+
+  border: 1px solid #2a2a2a;
+}
+
+.admin-stat-card span {
+  display: block;
+
+  color: #9ca3af;
+
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.admin-stat-card strong {
+  color: #4ade80;
+
+  font-size: 38px;
+  font-weight: 900;
+
+  text-shadow: 0 0 18px rgba(74, 222, 128, 0.45);
+}
+
+.scooter-revenue {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 130px;
+}
+
+.scooter-revenue span {
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.scooter-revenue strong {
+  color: #facc15;
+
+  font-size: 24px;
+  font-weight: 900;
+
+  text-shadow: 0 0 14px rgba(250, 204, 21, 0.4);
+}
+
+@media (max-width: 900px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-scooter-card {
+  grid-template-columns: 120px 110px 120px 150px minmax(420px, 1fr) !important;
+  gap: 18px !important;
+  align-items: center !important;
+}
+
+.scooter-model {
+  font-size: 28px !important;
+  min-width: 90px !important;
+}
+
+.scooter-charge,
+.scooter-revenue,
+.scooter-status {
+  align-items: flex-start !important;
+  min-width: 100px !important;
+}
+
+.scooter-charge strong,
+.scooter-revenue strong,
+.scooter-status strong {
+  font-size: 22px !important;
+}
+
+.admin-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
+}
+
+.admin-actions button {
+  width: auto !important;
+  min-width: 84px !important;
+  padding: 12px 14px !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 1180px) {
+  .admin-scooter-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-actions {
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+}

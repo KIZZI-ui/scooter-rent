@@ -12,6 +12,13 @@ function MapComponent() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
 
+  const [tariff, setTariff] = useState({
+    startPrice: 40,
+    minutePrice: 7,
+    dynamicMinutePrice: 7,
+    eveningMultiplierActive: false,
+  });
+
   const statusText = {
     available: "Свободен",
     busy: "Занят",
@@ -25,6 +32,13 @@ function MapComponent() {
     setTimeout(() => {
       setMessage("");
     }, 3000);
+  };
+
+  const loadTariff = async () => {
+    const res = await fetch("http://localhost:5000/tariff");
+    const data = await res.json();
+
+    setTariff(data);
   };
 
   const loadScooters = async () => {
@@ -62,6 +76,7 @@ function MapComponent() {
   };
 
   useEffect(() => {
+    loadTariff();
     loadScooters();
     loadRides();
   }, []);
@@ -79,9 +94,9 @@ function MapComponent() {
   useEffect(() => {
     if (rideStarted) {
       const minutes = Math.max(1, Math.ceil(seconds / 60));
-      setCost(40 + minutes * 7);
+      setCost(tariff.startPrice + minutes * tariff.dynamicMinutePrice);
     }
-  }, [seconds, rideStarted]);
+  }, [seconds, rideStarted, tariff]);
 
   const updateScooterStatus = async (id, status) => {
     const response = await fetch(`http://localhost:5000/scooters/${id}/status`, {
@@ -125,7 +140,7 @@ function MapComponent() {
       return;
     }
 
-    if (currentUser.balance < 50) {
+    if (currentUser.balance < tariff.startPrice + tariff.dynamicMinutePrice) {
       showMessage("Недостаточно средств на балансе", "error");
       return;
     }
@@ -138,7 +153,7 @@ function MapComponent() {
 
     setRideStarted(true);
     setSeconds(0);
-    setCost(47);
+    setCost(tariff.startPrice + tariff.dynamicMinutePrice);
     setFinishedRide(null);
 
     showMessage("Поездка началась", "success");
@@ -257,6 +272,12 @@ function MapComponent() {
 
           <h3>Самокат {selectedScooter.model}</h3>
 
+          {tariff.eveningMultiplierActive && (
+            <div className="tariff-alert">
+              Вечерний спрос: цена за минуту повышена
+            </div>
+          )}
+
           <div className="info-grid">
             <div>
               <span>Заряд</span>
@@ -265,12 +286,12 @@ function MapComponent() {
 
             <div>
               <span>Старт</span>
-              <strong>40 ₽</strong>
+              <strong>{tariff.startPrice} ₽</strong>
             </div>
 
             <div>
               <span>Минута</span>
-              <strong>7 ₽</strong>
+              <strong>{tariff.dynamicMinutePrice} ₽</strong>
             </div>
 
             <div>
