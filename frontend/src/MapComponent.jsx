@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
+import { YMaps, Map, Placemark, Polygon } from "@pbe/react-yandex-maps";
 
 function MapComponent() {
   const [scooters, setScooters] = useState([]);
@@ -11,6 +11,7 @@ function MapComponent() {
   const [rideHistory, setRideHistory] = useState([]);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
+  const [reserveSecondsLeft, setReserveSecondsLeft] = useState(0);
 
   const [tariff, setTariff] = useState({
     startPrice: 40,
@@ -21,9 +22,46 @@ function MapComponent() {
 
   const statusText = {
     available: "Свободен",
+    reserved: "Забронирован",
     busy: "Занят",
     repair: "Ремонт",
   };
+
+  const redZones = [
+  {
+    name: "Красная площадь",
+    coordinates: [
+      [
+        [55.7542, 37.6175],
+        [55.7542, 37.6255],
+        [55.7498, 37.6255],
+        [55.7498, 37.6175],
+      ],
+    ],
+  },
+  {
+    name: "Парк Зарядье",
+    coordinates: [
+      [
+        [55.7528, 37.626],
+        [55.7528, 37.632],
+        [55.7488, 37.632],
+        [55.7488, 37.626],
+      ],
+    ],
+  },
+  {
+    name: "Александровский сад",
+    coordinates: [
+      [
+        [55.7558, 37.611],
+        [55.7558, 37.617],
+        [55.7515, 37.617],
+        [55.7515, 37.611],
+      ],
+    ],
+  },
+];
 
   const showMessage = (text, type = "success") => {
     setMessage(text);
@@ -98,6 +136,30 @@ function MapComponent() {
     }
   }, [seconds, rideStarted, tariff]);
 
+  useEffect(() => {
+    if (!selectedScooter?.reservedUntil || selectedScooter.status !== "reserved") {
+      setReserveSecondsLeft(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const left = Math.max(
+        0,
+        Math.ceil((new Date(selectedScooter.reservedUntil) - new Date()) / 1000)
+      );
+
+      setReserveSecondsLeft(left);
+
+      if (left <= 0) {
+        clearInterval(interval);
+        loadScooters();
+        showMessage("Время бронирования истекло", "error");
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [selectedScooter]);
+
   const updateScooterStatus = async (id, status) => {
     const response = await fetch(`http://localhost:5000/scooters/${id}/status`, {
       method: "PUT",
@@ -127,6 +189,70 @@ function MapComponent() {
     return true;
   };
 
+  const reserveScooter = async () => {
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!currentUser) {
+      showMessage("Войдите в аккаунт, чтобы забронировать самокат", "error");
+      return;
+    }
+
+    if (selectedScooter.status !== "available") {
+      showMessage("Этот самокат нельзя забронировать", "error");
+      return;
+    }
+
+    const response = await fetch(
+      `http://localhost:5000/scooters/${selectedScooter.id}/reserve`,
+      {
+        method: "POST",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showMessage(data.message || "Ошибка бронирования", "error");
+      return;
+    }
+
+    setSelectedScooter(data.scooter);
+
+    setScooters((prev) =>
+      prev.map((scooter) =>
+        scooter.id === data.scooter.id ? data.scooter : scooter
+      )
+    );
+
+    showMessage("Самокат забронирован на 5 минут", "success");
+  };
+
+  const cancelReserve = async () => {
+    const response = await fetch(
+      `http://localhost:5000/scooters/${selectedScooter.id}/cancel-reserve`,
+      {
+        method: "POST",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showMessage(data.message || "Ошибка отмены брони", "error");
+      return;
+    }
+
+    setSelectedScooter(data.scooter);
+
+    setScooters((prev) =>
+      prev.map((scooter) =>
+        scooter.id === data.scooter.id ? data.scooter : scooter
+      )
+    );
+
+    showMessage("Бронирование отменено", "success");
+  };
+
   const startRide = async () => {
     const currentUser = JSON.parse(localStorage.getItem("user"));
 
@@ -135,8 +261,8 @@ function MapComponent() {
       return;
     }
 
-    if (selectedScooter.status !== "available") {
-      showMessage("Этот самокат сейчас недоступен", "error");
+    if (selectedScooter.status !== "reserved") {
+      showMessage("Сначала забронируйте самокат", "error");
       return;
     }
 
@@ -231,6 +357,23 @@ function MapComponent() {
               width="100%"
               height="100%"
             >
+              {redZones.map((zone) => (
+  <Polygon
+    key={zone.name}
+    geometry={zone.coordinates}
+    properties={{
+      hintContent: zone.name,
+      balloonContent: `${zone.name}: завершение поездки запрещено`,
+    }}
+options={{
+  fillColor: "rgba(239, 68, 68, 0.18)",
+  strokeColor: "#ef4444",
+  strokeWidth: 2,
+  strokeStyle: "dash",
+  strokeOpacity: 0.9,
+}}
+  />
+))}
               {scooters.map((scooter) => (
                 <Placemark
                   key={scooter.id}
@@ -263,6 +406,8 @@ function MapComponent() {
                   ? "green"
                   : selectedScooter.status === "busy"
                   ? "red"
+                  : selectedScooter.status === "reserved"
+                  ? "orange"
                   : "orange"
               }`}
             ></span>
@@ -300,11 +445,40 @@ function MapComponent() {
             </div>
           </div>
 
-          {!rideStarted ? (
-            <button className="start-button" onClick={startRide}>
-              Начать поездку
+          {!rideStarted && selectedScooter.status === "available" && (
+            <button className="reserve-button" onClick={reserveScooter}>
+              Забронировать
             </button>
-          ) : (
+          )}
+
+          {!rideStarted && selectedScooter.status === "reserved" && (
+            <div className="reserve-panel">
+              <div className="reserve-title">Самокат забронирован</div>
+
+              <div className="reserve-time">
+                Осталось: {Math.floor(reserveSecondsLeft / 60)}:
+                {String(reserveSecondsLeft % 60).padStart(2, "0")}
+              </div>
+
+              <button className="start-button" onClick={startRide}>
+                Начать поездку
+              </button>
+
+              <button className="cancel-reserve-button" onClick={cancelReserve}>
+                Отменить бронь
+              </button>
+            </div>
+          )}
+
+          {!rideStarted &&
+            selectedScooter.status !== "available" &&
+            selectedScooter.status !== "reserved" && (
+              <button className="start-button" disabled>
+                Самокат недоступен
+              </button>
+            )}
+
+          {rideStarted && (
             <div className="ride-panel">
               <div className="ride-header">Поездка активна</div>
 

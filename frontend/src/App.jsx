@@ -6,14 +6,26 @@ import AdminPanel from "./AdminPanel";
 function App() {
   const [showAuth, setShowAuth] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
 
   const [payments, setPayments] = useState([]);
+  const [supportMessage, setSupportMessage] = useState("");
 
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  const [profileForm, setProfileForm] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    const parsedUser = savedUser ? JSON.parse(savedUser) : null;
+
+    return {
+      username: parsedUser?.username || "",
+      phone: parsedUser?.phone || "",
+    };
   });
 
   const [notification, setNotification] = useState("");
@@ -46,6 +58,13 @@ function App() {
   };
 
   const openProfile = async () => {
+    if (user) {
+      setProfileForm({
+        username: user.username || "",
+        phone: user.phone || "",
+      });
+    }
+
     setShowProfile(true);
     await loadPayments();
   };
@@ -74,6 +93,36 @@ function App() {
     } else {
       showMessage(data.message || "Ошибка пополнения", "error");
     }
+  };
+
+  const saveProfile = () => {
+    const updatedUser = {
+      ...user,
+      username: profileForm.username,
+      phone: profileForm.phone,
+    };
+
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+
+    showMessage("Профиль обновлён", "success");
+  };
+
+  const sendSupport = () => {
+    if (!user) {
+      showMessage("Войдите в аккаунт, чтобы отправить обращение", "error");
+      return;
+    }
+
+    if (!supportMessage.trim()) {
+      showMessage("Введите текст обращения", "error");
+      return;
+    }
+
+    setSupportMessage("");
+    setShowSupport(false);
+
+    showMessage("Обращение отправлено в поддержку", "success");
   };
 
   const scrollToMap = () => {
@@ -148,6 +197,11 @@ function App() {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       setUser(data.user);
+      setProfileForm({
+        username: data.user?.username || "",
+        phone: data.user?.phone || "",
+      });
+
       setShowAuth(false);
 
       showMessage("Вход выполнен", "success");
@@ -163,7 +217,13 @@ function App() {
     setUser(null);
     setShowAdmin(false);
     setShowProfile(false);
+    setShowSupport(false);
     setPayments([]);
+    setProfileForm({
+      username: "",
+      phone: "",
+    });
+    setSupportMessage("");
 
     showMessage("Вы вышли из аккаунта", "success");
   };
@@ -199,6 +259,10 @@ function App() {
 
           <button className="nav-button" onClick={scrollToRides}>
             Поездки
+          </button>
+
+          <button className="nav-button" onClick={() => setShowSupport(true)}>
+            Поддержка
           </button>
 
           {user?.role === "admin" && (
@@ -247,6 +311,37 @@ function App() {
         </>
       )}
 
+      {showSupport && (
+        <div className="modal-overlay">
+          <div className="support-modal">
+            <button
+              className="close-button"
+              onClick={() => setShowSupport(false)}
+            >
+              ×
+            </button>
+
+            <h2>Поддержка</h2>
+
+            <p>
+              Опишите проблему с поездкой, оплатой или техническим состоянием
+              самоката.
+            </p>
+
+            <textarea
+              className="support-textarea"
+              placeholder="Напишите обращение..."
+              value={supportMessage}
+              onChange={(e) => setSupportMessage(e.target.value)}
+            />
+
+            <button className="support-button" onClick={sendSupport}>
+              Отправить обращение
+            </button>
+          </div>
+        </div>
+      )}
+
       {showProfile && user && (
         <div className="modal-overlay">
           <div className="profile-modal">
@@ -262,12 +357,38 @@ function App() {
             <div className="profile-card">
               <div>
                 <span>Имя</span>
-                <strong>{user.username}</strong>
+
+                <input
+                  className="profile-input"
+                  value={profileForm.username}
+                  onChange={(e) =>
+                    setProfileForm({
+                      ...profileForm,
+                      username: e.target.value,
+                    })
+                  }
+                />
               </div>
 
               <div>
                 <span>Email</span>
                 <strong>{user.email || "Не указан"}</strong>
+              </div>
+
+              <div>
+                <span>Телефон</span>
+
+                <input
+                  className="profile-input"
+                  placeholder="+7 (999) 123-45-67"
+                  value={profileForm.phone}
+                  onChange={(e) =>
+                    setProfileForm({
+                      ...profileForm,
+                      phone: e.target.value,
+                    })
+                  }
+                />
               </div>
 
               <div>
@@ -278,6 +399,10 @@ function App() {
 
             <button className="topup-button" onClick={topUpBalance}>
               Пополнить баланс +500 ₽
+            </button>
+
+            <button className="save-profile-button" onClick={saveProfile}>
+              Сохранить профиль
             </button>
 
             <div className="payments-block">
