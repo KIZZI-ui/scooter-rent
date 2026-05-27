@@ -6,6 +6,30 @@ const Scooter = require("../models/Scooter");
 const User = require("../models/User");
 const Payment = require("../models/Payment");
 
+router.delete("/clear/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    await Ride.destroy({
+      where: {
+        userId: userId,
+      },
+    });
+
+    res.json({
+      success: true,
+      message: "История очищена",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Ошибка удаления",
+    });
+  }
+});
+
 router.get("/:userId", async (req, res) => {
   try {
     const rides = await Ride.findAll({

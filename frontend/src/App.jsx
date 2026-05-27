@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import MapComponent from "./MapComponent";
 import AdminPanel from "./AdminPanel";
@@ -36,6 +36,20 @@ function App() {
     email: "",
     password: "",
   });
+
+const [showScrollTop, setShowScrollTop] = useState(false);
+
+useEffect(() => {
+  const handleScroll = () => {
+    setShowScrollTop(window.scrollY > 400);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, []);
 
   const showMessage = (text, type = "success") => {
     setNotification(text);
@@ -126,21 +140,57 @@ function App() {
   };
 
   const scrollToMap = () => {
-    setShowAdmin(false);
+  setShowAdmin(false);
 
-    document.getElementById("map-section")?.scrollIntoView({
-      behavior: "smooth",
-    });
-  };
+  setTimeout(() => {
+    const element = document.getElementById("map-section");
+
+    if (element) {
+      const offset = 110;
+
+      const top =
+        element.getBoundingClientRect().top +
+        window.pageYOffset -
+        offset;
+
+      window.scrollTo({
+        top,
+        behavior: "smooth",
+      });
+    }
+  }, 100);
+};
+
+const openAdminPanel = () => {
+  setShowAdmin(true);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 
   const scrollToRides = () => {
-    setShowAdmin(false);
+  setShowAdmin(false);
 
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth",
-    });
-  };
+  setTimeout(() => {
+    const element = document.getElementById("rides");
+
+    if (element) {
+      const offset = 110;
+
+      const top =
+        element.getBoundingClientRect().top +
+        window.pageYOffset -
+        offset;
+
+      window.scrollTo({
+        top,
+        behavior: "smooth",
+      });
+    }
+  }, 100);
+};
 
   const handleChange = (e) => {
     setForm({
@@ -249,6 +299,7 @@ function App() {
                 behavior: "smooth",
               });
             }}
+            
           >
             Главная
           </button>
@@ -266,7 +317,7 @@ function App() {
           </button>
 
           {user?.role === "admin" && (
-            <button className="nav-button" onClick={() => setShowAdmin(true)}>
+            <button className="nav-button" onClick={openAdminPanel}>
               Админка
             </button>
           )}
@@ -301,10 +352,58 @@ function App() {
             <h1>Аренда электросамокатов</h1>
 
             <p>Быстрая аренда самокатов с поминутной тарификацией</p>
+            
 
             <button onClick={scrollToMap}>Открыть карту</button>
-          </section>
+            <div className="stats-grid">
+  <div className="stats-card">
+    <span>Самокатов онлайн</span>
+    <strong>24</strong>
+  </div>
 
+  <div className="stats-card">
+    <span>Средняя цена</span>
+    <strong>7 ₽/мин</strong>
+  </div>
+
+  <div className="stats-card">
+    <span>Активных поездок</span>
+    <strong>12</strong>
+  </div>
+
+  <div className="stats-card">
+    <span>Поддержка</span>
+    <strong>24/7</strong>
+  </div>
+</div>
+          </section>
+<section className="steps-section">
+  <div className="steps-header">
+    <span>Сценарий аренды</span>
+    <h2>Как начать поездку</h2>
+    <p>Весь процесс занимает меньше минуты: выберите самокат, забронируйте его и начните аренду.</p>
+  </div>
+
+  <div className="steps-grid">
+    <div className="step-card">
+      <b>1</b>
+      <h3>Выберите самокат</h3>
+      <p>Откройте карту и выберите ближайший свободный электросамокат.</p>
+    </div>
+
+    <div className="step-card">
+      <b>2</b>
+      <h3>Забронируйте</h3>
+      <p>Самокат закрепляется за пользователем на ограниченное время.</p>
+    </div>
+
+    <div className="step-card">
+      <b>3</b>
+      <h3>Начните поездку</h3>
+      <p>После запуска аренды система считает время и итоговую стоимость.</p>
+    </div>
+  </div>
+</section>
           <section id="map-section" className="map-section">
             <MapComponent />
           </section>
@@ -492,6 +591,34 @@ function App() {
           </div>
         </div>
       )}
+      {showScrollTop && (
+  <button
+    className="scroll-top"
+    onClick={() =>
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      })
+    }
+  >
+    ↑
+  </button>
+)}
+
+<footer className="footer">
+  <div className="footer-line"></div>
+
+  <div className="footer-content">
+    <h2>ScooterRent</h2>
+
+    <p>
+      Аренда электросамокатов нового поколения
+    </p>
+
+    <span>© 2026</span>
+  </div>
+</footer>
+
     </div>
   );
 }

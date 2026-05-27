@@ -1,7 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { YMaps, Map, Placemark, Polygon } from "@pbe/react-yandex-maps";
 
 function MapComponent() {
+  const mapRef = useRef(null);
+
+const moveMapToScooter = (scooter) => {
+  if (!mapRef.current || !scooter) return;
+
+  mapRef.current.panTo(
+    [scooter.latitude, scooter.longitude],
+    {
+      flying: true,
+      duration: 800,
+    }
+  );
+};
+
+const refreshMapSize = () => {
+  if (!mapRef.current) return;
+
+  let frame = 0;
+
+  const animateResize = () => {
+    frame++;
+
+    mapRef.current.container.fitToViewport();
+
+    if (frame < 18) {
+      requestAnimationFrame(animateResize);
+    }
+  };
+
+  requestAnimationFrame(animateResize);
+};
+
   const [scooters, setScooters] = useState([]);
   const [selectedScooter, setSelectedScooter] = useState(null);
   const [rideStarted, setRideStarted] = useState(false);
@@ -113,6 +145,34 @@ function MapComponent() {
     setRideHistory(data);
   };
 
+  const clearRideHistory = async () => {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  if (!currentUser) {
+    showMessage("Войдите в аккаунт", "error");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/rides/clear/${currentUser.id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (response.ok) {
+      setRideHistory([]);
+      showMessage("История очищена", "success");
+    } else {
+      showMessage("Ошибка очистки", "error");
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
   useEffect(() => {
     loadTariff();
     loadScooters();
@@ -179,6 +239,10 @@ function MapComponent() {
     if (data.scooter) {
       setSelectedScooter(data.scooter);
 
+      refreshMapSize();
+
+      moveMapToScooter(data.scooter);
+
       setScooters((prev) =>
         prev.map((scooter) =>
           scooter.id === data.scooter.id ? data.scooter : scooter
@@ -218,6 +282,8 @@ function MapComponent() {
 
     setSelectedScooter(data.scooter);
 
+    refreshMapSize();
+
     setScooters((prev) =>
       prev.map((scooter) =>
         scooter.id === data.scooter.id ? data.scooter : scooter
@@ -243,6 +309,8 @@ function MapComponent() {
     }
 
     setSelectedScooter(data.scooter);
+
+    refreshMapSize();
 
     setScooters((prev) =>
       prev.map((scooter) =>
@@ -349,14 +417,17 @@ function MapComponent() {
               lang: "ru_RU",
             }}
           >
-            <Map
-              state={{
-                center: [selectedScooter.latitude, selectedScooter.longitude],
-                zoom: 11,
-              }}
-              width="100%"
-              height="100%"
-            >
+           <Map
+  state={{
+    center: [selectedScooter.latitude, selectedScooter.longitude],
+    zoom: 11,
+  }}
+  width="100%"
+  height="100%"
+  instanceRef={(ref) => {
+    mapRef.current = ref;
+  }}
+>
               {redZones.map((zone) => (
   <Polygon
     key={zone.name}
@@ -440,9 +511,9 @@ options={{
             </div>
 
             <div>
-              <span>Статус</span>
-              <strong>{statusText[selectedScooter.status]}</strong>
-            </div>
+  <span>Запас хода</span>
+  <strong>{Math.floor(selectedScooter.charge * 0.7)} км</strong>
+</div>
           </div>
 
           {!rideStarted && selectedScooter.status === "available" && (
@@ -526,9 +597,18 @@ options={{
       </div>
 
       <section id="rides" className="history-section">
-        <div className="history-header">
-          <h2>История поездок</h2>
-        </div>
+<div className="history-header">
+  <h2>История поездок</h2>
+
+  {rideHistory.length > 0 && (
+    <button
+      className="clear-history-button"
+      onClick={clearRideHistory}
+    >
+      Очистить историю
+    </button>
+  )}
+</div>
 
         {rideHistory.length === 0 ? (
           <div className="empty-history">Завершённых поездок пока нет</div>

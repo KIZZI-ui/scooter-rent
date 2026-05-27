@@ -13,9 +13,16 @@ const metroCoords = {
   "Юго-Западная": { latitude: 55.664, longitude: 37.482 },
 };
 
+const periodTitles = {
+  week: "Последние 7 дней",
+  month: "Доход по месяцам",
+  year: "Доход по годам",
+};
+
 function AdminPanel() {
   const [scooters, setScooters] = useState([]);
   const [notification, setNotification] = useState("");
+  const [incomePeriod, setIncomePeriod] = useState("week");
 
   const [stats, setStats] = useState({
     scootersCount: 0,
@@ -39,6 +46,27 @@ function AdminPanel() {
 
   const token = localStorage.getItem("token");
 
+  const averageCharge =
+    scooters.length > 0
+      ? Math.round(
+          scooters.reduce((sum, scooter) => sum + Number(scooter.charge || 0), 0) /
+            scooters.length
+        )
+      : 0;
+
+  const activeRides = scooters.filter((scooter) => scooter.status === "busy").length;
+
+  const averageRideMinutes =
+    stats.scooterStats?.length > 0
+      ? Math.max(
+          1,
+          Math.round(
+            stats.scooterStats.reduce((sum, item) => sum + Number(item.ridesCount || 0), 0) /
+              Math.max(stats.scootersCount || 1, 1)
+          )
+        )
+      : 0;
+
   const statusText = {
     available: "Свободен",
     busy: "Занят",
@@ -56,6 +84,7 @@ function AdminPanel() {
   const loadScooters = async () => {
     const res = await fetch("http://localhost:5000/scooters");
     const data = await res.json();
+
     setScooters(data);
   };
 
@@ -124,6 +153,8 @@ function AdminPanel() {
       });
 
       showNotification("Самокат успешно добавлен");
+    } else {
+      showNotification("Ошибка добавления самоката");
     }
   };
 
@@ -139,7 +170,10 @@ function AdminPanel() {
     if (response.ok) {
       await loadScooters();
       await loadStats();
+
       showNotification(`Статус изменён на "${statusText[status]}"`);
+    } else {
+      showNotification("Ошибка изменения статуса");
     }
   };
 
@@ -154,7 +188,10 @@ function AdminPanel() {
     if (response.ok) {
       await loadScooters();
       await loadStats();
+
       showNotification("Самокат удалён");
+    } else {
+      showNotification("Ошибка удаления самоката");
     }
   };
 
@@ -165,11 +202,16 @@ function AdminPanel() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(tariff),
+      body: JSON.stringify({
+        startPrice: Number(tariff.startPrice),
+        minutePrice: Number(tariff.minutePrice),
+      }),
     });
 
     if (response.ok) {
       showNotification("Тариф успешно обновлён");
+    } else {
+      showNotification("Ошибка обновления тарифа");
     }
   };
 
@@ -197,15 +239,100 @@ function AdminPanel() {
       <div className="admin-container">
         <h1>Админ-панель</h1>
 
+        <div className="system-status">
+          <span className="status-dot"></span>
+          Система активна
+        </div>
+
         <div className="admin-stats-grid">
-          <div className="admin-stat-card">
-            <span>Самокатов</span>
-            <strong>{stats.scootersCount}</strong>
+          <div className="income-chart">
+            <div className="chart-header">
+              <div>
+                <h2>Доход</h2>
+                <span>{periodTitles[incomePeriod]}</span>
+              </div>
+
+              <div className="chart-tabs">
+                <button
+                  className={incomePeriod === "week" ? "active" : ""}
+                  onClick={() => setIncomePeriod("week")}
+                >
+                  Неделя
+                </button>
+
+                <button
+                  className={incomePeriod === "month" ? "active" : ""}
+                  onClick={() => setIncomePeriod("month")}
+                >
+                  Месяц
+                </button>
+
+<button
+  className={incomePeriod === "year" ? "active" : ""}
+  onClick={() => setIncomePeriod("year")}
+>
+  Год
+</button>
+
+              </div>
+            </div>
+
+            <div className="chart-bars">
+  {stats.income?.[incomePeriod]?.map((item) => {
+    const maxValue = Math.max(
+      ...stats.income[incomePeriod].map((i) => i.value),
+      1
+    );
+
+    const height = Math.max(
+      (item.value / maxValue) * 150,
+      20
+    );
+
+    return (
+      <div className="chart-item" key={item.label}>
+        <div
+          className="chart-bar"
+          style={{ height: `${height}px` }}
+        ></div>
+
+        <strong>{item.value} ₽</strong>
+        <span>{item.label}</span>
+      </div>
+    );
+  })}
+</div>
           </div>
 
-          <div className="admin-stat-card">
-            <span>Общая выручка</span>
-            <strong>{stats.totalRevenue} ₽</strong>
+          <div className="admin-stat-card scooters-card">
+  <h3>Активность</h3>
+
+  <div className="mini-stats">
+    <div>
+      <span>Самокатов</span>
+      <strong>{stats.scootersCount}</strong>
+    </div>
+
+    <div>
+      <span>Средний заряд</span>
+      <strong>{averageCharge}%</strong>
+    </div>
+
+    <div>
+      <span>Активных поездок</span>
+      <strong>{activeRides}</strong>
+    </div>
+
+    <div>
+      <span>Средняя поездка</span>
+      <strong>{averageRideMinutes} мин</strong>
+    </div>
+  </div>
+</div>
+
+          <div className="admin-stat-card revenue-card">
+            <span>Выручка за сегодня</span>
+<strong>{stats.todayRevenue || 0} ₽</strong>
           </div>
         </div>
 
@@ -283,6 +410,7 @@ function AdminPanel() {
                     ...newScooter,
                     metro: "",
                   });
+
                   return;
                 }
 
@@ -315,56 +443,60 @@ function AdminPanel() {
           <h2>Список самокатов</h2>
 
           <div className="admin-scooters">
-            {scooters.map((scooter) => (
-              <div className="admin-scooter-card" key={scooter.id}>
-                <div className="scooter-model">{scooter.model}</div>
+            {scooters.length === 0 ? (
+              <div className="empty-history">Самокатов пока нет</div>
+            ) : (
+              scooters.map((scooter) => (
+                <div className="admin-scooter-card" key={scooter.id}>
+                  <div className="scooter-model">{scooter.model}</div>
 
-                <div className="scooter-charge">
-                  <span>Заряд</span>
-                  <strong>{scooter.charge}%</strong>
+                  <div className="scooter-charge">
+                    <span>Заряд</span>
+                    <strong>{scooter.charge}%</strong>
+                  </div>
+
+                  <div className="scooter-revenue">
+                    <span>Выручка</span>
+                    <strong>{getScooterRevenue(scooter.id)} ₽</strong>
+                  </div>
+
+                  <div className={`scooter-status status-${scooter.status}`}>
+                    <span>Статус</span>
+                    <strong>{statusText[scooter.status] || "Неизвестно"}</strong>
+                  </div>
+
+                  <div className="admin-actions">
+                    <button
+                      className="free-btn"
+                      onClick={() => updateStatus(scooter.id, "available")}
+                    >
+                      Свободен
+                    </button>
+
+                    <button
+                      className="busy-btn"
+                      onClick={() => updateStatus(scooter.id, "busy")}
+                    >
+                      Занят
+                    </button>
+
+                    <button
+                      className="repair-btn"
+                      onClick={() => updateStatus(scooter.id, "repair")}
+                    >
+                      Ремонт
+                    </button>
+
+                    <button
+                      className="delete-button"
+                      onClick={() => deleteScooter(scooter.id)}
+                    >
+                      Удалить
+                    </button>
+                  </div>
                 </div>
-
-                <div className="scooter-revenue">
-                  <span>Выручка</span>
-                  <strong>{getScooterRevenue(scooter.id)} ₽</strong>
-                </div>
-
-                <div className={`scooter-status status-${scooter.status}`}>
-                  <span>Статус</span>
-                  <strong>{statusText[scooter.status]}</strong>
-                </div>
-
-                <div className="admin-actions">
-                  <button
-                    className="free-btn"
-                    onClick={() => updateStatus(scooter.id, "available")}
-                  >
-                    Свободен
-                  </button>
-
-                  <button
-                    className="busy-btn"
-                    onClick={() => updateStatus(scooter.id, "busy")}
-                  >
-                    Занят
-                  </button>
-
-                  <button
-                    className="repair-btn"
-                    onClick={() => updateStatus(scooter.id, "repair")}
-                  >
-                    Ремонт
-                  </button>
-
-                  <button
-                    className="delete-button"
-                    onClick={() => deleteScooter(scooter.id)}
-                  >
-                    Удалить
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
       </div>
