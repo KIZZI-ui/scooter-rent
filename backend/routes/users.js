@@ -62,4 +62,118 @@ router.get("/:id/payments", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: [
+  "id",
+  "username",
+  "email",
+  "phone",
+  "role",
+  "balance",
+  "status",
+  "isOnline",
+  "lastSeenAt",
+  "blockReason",
+  "createdAt",
+],
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({
+      message: "Ошибка получения пользователей",
+      error: error.message,
+    });
+  }
+});
+
+router.put("/:id/block", async (req, res) => {
+  try {
+    const { reason } = req.body;
+
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Пользователь не найден",
+      });
+    }
+
+    user.status = "blocked";
+    user.blockReason = reason || "Заблокирован администратором";
+
+    await user.save();
+
+    res.json({
+      message: "Пользователь заблокирован",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Ошибка блокировки пользователя",
+      error: error.message,
+    });
+  }
+});
+
+router.put("/:id/unblock", async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Пользователь не найден",
+      });
+    }
+
+    user.status = "active";
+    user.blockReason = null;
+
+    await user.save();
+
+    res.json({
+      message: "Пользователь разблокирован",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Ошибка разблокировки пользователя",
+      error: error.message,
+    });
+  }
+});
+
+router.put("/:id/online", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+
+  if (!user) {
+    return res.status(404).json({ message: "Пользователь не найден" });
+  }
+
+  user.isOnline = true;
+  user.lastSeenAt = new Date();
+
+  await user.save();
+
+  res.json({ message: "Пользователь онлайн" });
+});
+
+router.put("/:id/offline", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+
+  if (!user) {
+    return res.status(404).json({ message: "Пользователь не найден" });
+  }
+
+  user.isOnline = false;
+  user.lastSeenAt = new Date();
+
+  await user.save();
+
+  res.json({ message: "Пользователь офлайн" });
+});
+
 module.exports = router;

@@ -21,6 +21,11 @@ const periodTitles = {
 
 function AdminPanel() {
   const [scooters, setScooters] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [usersExpanded, setUsersExpanded] = useState(false);
+  const [userSearch, setUserSearch] = useState("");
+  const [userFilter, setUserFilter] = useState("all");
   const [notification, setNotification] = useState("");
   const [incomePeriod, setIncomePeriod] = useState("week");
 
@@ -98,6 +103,13 @@ function AdminPanel() {
     });
   };
 
+const loadUsers = async () => {
+  const res = await fetch("http://localhost:5000/users");
+  const data = await res.json();
+
+  setUsers(data);
+};
+
   const loadStats = async () => {
     const res = await fetch("http://localhost:5000/admin-stats");
     const data = await res.json();
@@ -106,10 +118,49 @@ function AdminPanel() {
   };
 
   useEffect(() => {
-    loadScooters();
-    loadTariff();
-    loadStats();
-  }, []);
+  loadScooters();
+  loadTariff();
+  loadStats();
+  loadUsers();
+
+  const interval = setInterval(() => {
+    loadUsers();
+  }, 3000);
+
+  return () => clearInterval(interval);
+}, []);
+
+const blockUser = async (id) => {
+  const response = await fetch(`http://localhost:5000/users/${id}/block`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      reason: "Нарушение правил сервиса",
+    }),
+  });
+
+  if (response.ok) {
+    await loadUsers();
+    showNotification("Пользователь заблокирован");
+  } else {
+    showNotification("Ошибка блокировки пользователя");
+  }
+};
+
+const unblockUser = async (id) => {
+  const response = await fetch(`http://localhost:5000/users/${id}/unblock`, {
+    method: "PUT",
+  });
+
+  if (response.ok) {
+    await loadUsers();
+    showNotification("Пользователь разблокирован");
+  } else {
+    showNotification("Ошибка разблокировки пользователя");
+  }
+};
 
   const createScooter = async () => {
     if (!newScooter.serial) {
@@ -223,6 +274,23 @@ function AdminPanel() {
     return scooterStat?.revenue || 0;
   };
 
+const filteredUsers = users.filter((user) => {
+  const query = userSearch.toLowerCase();
+
+  const matchesSearch =
+    user.username?.toLowerCase().includes(query) ||
+    user.email?.toLowerCase().includes(query) ||
+    user.phone?.toLowerCase().includes(query);
+
+  const matchesFilter =
+    userFilter === "all" ||
+    (userFilter === "online" && user.isOnline) ||
+    (userFilter === "offline" && !user.isOnline) ||
+    (userFilter === "blocked" && user.status === "blocked");
+
+  return matchesSearch && matchesFilter;
+});
+
   return (
     <div className="admin-page">
       {notification && (
@@ -308,15 +376,21 @@ function AdminPanel() {
   <h3>Активность</h3>
 
   <div className="mini-stats">
-    <div>
-      <span>Самокатов</span>
-      <strong>{stats.scootersCount}</strong>
-    </div>
+    <div className="activity-item scooter-activity">
+  <img src="/scooter.png" alt="Самокат" className="activity-scooter-img" />
+  <span>Самокатов</span>
+  <strong>{scooters.length}</strong>
+</div>
 
-    <div>
-      <span>Средний заряд</span>
-      <strong>{averageCharge}%</strong>
-    </div>
+    <div className="activity-item">
+  <span>Средний заряд</span>
+
+  <strong>{averageCharge}%</strong>
+
+  <small className="range-text">
+    ~{Math.round((averageCharge / 100) * 70)} км
+  </small>
+</div>
 
     <div>
       <span>Активных поездок</span>
@@ -335,6 +409,143 @@ function AdminPanel() {
 <strong>{stats.todayRevenue || 0} ₽</strong>
           </div>
         </div>
+
+        <section className={`admin-users-card ${usersExpanded ? "expanded" : ""}`}>
+  <div className="users-card-header">
+    <div>
+      <h2>Пользователи</h2>
+      <span>Управление аккаунтами</span>
+    </div>
+
+    <strong>{users.length}</strong>
+  </div>
+
+  <div className="users-toolbar">
+    <input
+      type="text"
+      placeholder="Поиск по имени, email или телефону"
+      value={userSearch}
+      onChange={(e) => setUserSearch(e.target.value)}
+    />
+
+    <select value={userFilter} onChange={(e) => setUserFilter(e.target.value)}>
+      <option value="all">Все пользователи</option>
+      <option value="online">Онлайн</option>
+      <option value="offline">Офлайн</option>
+      <option value="blocked">Заблокированные</option>
+    </select>
+
+    <button onClick={() => setUsersExpanded(!usersExpanded)}>
+      {usersExpanded ? "Свернуть" : "Развернуть"}
+    </button>
+  </div>
+
+  <div className="users-list">
+    {filteredUsers.map((user) => (
+      <div className="user-row" key={user.id}>
+        <div>
+          <strong>{user.username}</strong>
+          <span>{user.email}</span>
+        </div>
+
+        <div>
+          <span>Телефон</span>
+          <b>{user.phone || "Не указан"}</b>
+        </div>
+
+        <div>
+          <span>Баланс</span>
+          <b>{user.balance} ₽</b>
+        </div>
+
+        <div>
+          <span>Статус</span>
+          <b
+            className={
+              user.status === "blocked"
+                ? "user-blocked"
+                : user.isOnline
+                ? "user-online"
+                : "user-offline"
+            }
+          >
+            {user.status === "blocked"
+              ? "Заблокирован"
+              : user.isOnline
+              ? "Онлайн"
+              : "Офлайн"}
+          </b>
+        </div>
+
+        <div className="user-actions">
+          <button onClick={() => setSelectedUser(user)}>
+            Профиль
+          </button>
+
+          {user.status === "blocked" ? (
+            <button className="user-unblock-btn" onClick={() => unblockUser(user.id)}>
+              Разблокировать
+            </button>
+          ) : (
+            <button className="user-block-btn" onClick={() => blockUser(user.id)}>
+              Заблокировать
+            </button>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+{selectedUser && (
+  <div className="user-profile-modal">
+    <div className="user-profile-card">
+      <button className="close-button" onClick={() => setSelectedUser(null)}>
+        ×
+      </button>
+
+      <h2>Профиль пользователя</h2>
+
+      <div className="profile-info-grid">
+        <div>
+          <span>Имя</span>
+          <strong>{selectedUser.username}</strong>
+        </div>
+
+        <div>
+          <span>Email</span>
+          <strong>{selectedUser.email}</strong>
+        </div>
+
+        <div>
+          <span>Телефон</span>
+          <strong>{selectedUser.phone || "Не указан"}</strong>
+        </div>
+
+        <div>
+          <span>Баланс</span>
+          <strong>{selectedUser.balance} ₽</strong>
+        </div>
+
+        <div>
+          <span>Роль</span>
+          <strong>{selectedUser.role}</strong>
+        </div>
+
+        <div>
+          <span>Статус</span>
+          <strong>
+            {selectedUser.status === "blocked"
+              ? "Заблокирован"
+              : selectedUser.isOnline
+              ? "Онлайн"
+              : "Офлайн"}
+          </strong>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
         <section className="admin-block">
           <h2>Управление тарифом</h2>

@@ -95,6 +95,49 @@ const refreshMapSize = () => {
   },
 ];
 
+const parkingZones = [
+  {
+    id: 1,
+    name: "Парковка Арбат",
+    coords: [55.7522, 37.5931],
+  },
+  {
+    id: 2,
+    name: "Парковка Москва-Сити",
+    coords: [55.7495, 37.5378],
+  },
+  {
+    id: 3,
+    name: "Парковка Тверская",
+    coords: [55.7648, 37.6067],
+  },
+  {
+    id: 4,
+    name: "Парковка Парк Горького",
+    coords: [55.7298, 37.6010],
+  },
+  {
+    id: 5,
+    name: "Парковка ВДНХ",
+    coords: [55.8298, 37.6339],
+  },
+  {
+    id: 6,
+    name: "Парковка Сокольники",
+    coords: [55.7942, 37.6765],
+  },
+  {
+    id: 7,
+    name: "Парковка Лужники",
+    coords: [55.7158, 37.5537],
+  },
+  {
+    id: 8,
+    name: "Парковка Белорусская",
+    coords: [55.7767, 37.5849],
+  },
+];
+
   const showMessage = (text, type = "success") => {
     setMessage(text);
     setMessageType(type);
@@ -428,6 +471,28 @@ const refreshMapSize = () => {
     mapRef.current = ref;
   }}
 >
+
+{parkingZones.map((zone) => (
+  <Placemark
+    key={zone.id}
+    geometry={zone.coords}
+    onClick={() => {
+      showMessage("Тут ты можешь оставить самокат", "success");
+    }}
+    properties={{
+      hintContent: "Парковочная зона",
+      balloonContent: `${zone.name}: тут можно оставить самокат`,
+    }}
+    options={{
+      iconLayout: "default#image",
+      iconImageHref: "/parking.png",
+      iconImageSize: [42, 42],
+      iconImageOffset: [-21, -42],
+      cursor: "pointer",
+    }}
+  />
+))}
+
               {redZones.map((zone) => (
   <Polygon
     key={zone.name}

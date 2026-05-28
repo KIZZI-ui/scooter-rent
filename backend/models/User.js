@@ -13,6 +13,11 @@ const User = sequelize.define("User", {
     unique: true,
   },
 
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
   password: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -27,6 +32,27 @@ const User = sequelize.define("User", {
     type: DataTypes.INTEGER,
     defaultValue: 300,
   },
+
+  status: {
+    type: DataTypes.STRING,
+    defaultValue: "active",
+  },
+
+  blockReason: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  isOnline: {
+  type: DataTypes.BOOLEAN,
+  defaultValue: false,
+},
+
+lastSeenAt: {
+  type: DataTypes.DATE,
+  allowNull: true,
+},
+
 });
 
 module.exports = User;
