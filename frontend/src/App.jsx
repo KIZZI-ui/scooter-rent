@@ -593,24 +593,34 @@ function App() {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  const logout = async () => {
+  if (user?.id) {
+    try {
+      await fetch(`http://localhost:5000/users/${user.id}/offline`, {
+        method: "PUT",
+      });
+    } catch (error) {
+      console.log("Ошибка установки offline:", error);
+    }
+  }
 
-    setUser(null);
-    setShowAdmin(false);
-    setShowProfile(false);
-    setShowSupport(false);
-    setPayments([]);
-    setProfileForm({
-      username: "",
-      phone: "",
-    });
-    setSupportMessage("");
-    setPage("home");
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 
-    showMessage("Вы вышли из аккаунта", "success");
-  };
+  setUser(null);
+  setShowAdmin(false);
+  setShowProfile(false);
+  setShowSupport(false);
+  setPayments([]);
+  setProfileForm({
+    username: "",
+    phone: "",
+  });
+  setSupportMessage("");
+  setPage("home");
+
+  showMessage("Вы вышли из аккаунта", "success");
+};
 
   return (
     <div className="app">
@@ -663,14 +673,20 @@ function App() {
           )}
 
           {user ? (
-            <button className="nav-button" onClick={logout}>
-              Выйти
-            </button>
-          ) : (
-            <button className="nav-button" onClick={() => setShowAuth(true)}>
-              Профиль
-            </button>
-          )}
+  <button
+    className="nav-button logout-btn"
+    onClick={logout}
+  >
+    Выйти
+  </button>
+) : (
+  <button
+    className="nav-button"
+    onClick={() => setShowAuth(true)}
+  >
+    Войти
+  </button>
+)}
         </nav>
       </header>
 

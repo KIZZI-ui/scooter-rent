@@ -82,7 +82,7 @@ body::before {
   z-index: 99999 !important;
 
   height: 72px;
-  padding: 0 56px;
+  padding: 0 24px 0 56px;
 
   display: flex;
   align-items: center;
@@ -126,6 +126,9 @@ nav {
   display: flex;
   align-items: center;
   gap: 12px;
+
+  margin-left: auto;
+  margin-right: 0;
 }
 
 .nav-button {
@@ -422,15 +425,15 @@ button:disabled {
 }
 
 .stats-card:hover {
-  transform: translateY(-6px) scale(1.015);
-  border-color: rgba(110, 231, 183, 0.34) !important;
-  background:
-    radial-gradient(circle at top left, rgba(74, 222, 128, 0.14), transparent 38%),
-    linear-gradient(180deg, rgba(24, 30, 26, 0.9), rgba(8, 10, 9, 0.72)) !important;
+  transform: translateY(-4px);
+
+  background: var(--panel-bg) !important;
+
+  border-color: rgba(110, 231, 183, 0.16) !important;
+
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 24px 70px rgba(0, 0, 0, 0.42),
-    0 0 34px rgba(74, 222, 128, 0.14) !important;
+    0 18px 50px rgba(0, 0, 0, 0.42),
+    0 0 10px rgba(74, 222, 128, 0.05) !important;
 }
 
 .stats-card span {
@@ -496,12 +499,15 @@ button:disabled {
 }
 
 .step-card:hover {
-  transform: translateY(-6px) scale(1.015);
-  border-color: rgba(110, 231, 183, 0.34) !important;
+  transform: translateY(-4px);
+
+  background: var(--panel-bg) !important;
+
+  border-color: rgba(110, 231, 183, 0.16) !important;
+
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.06),
-    0 24px 70px rgba(0,0,0,0.42),
-    0 0 34px rgba(74,222,128,0.14) !important;
+    0 18px 50px rgba(0, 0, 0, 0.42),
+    0 0 10px rgba(74, 222, 128, 0.05) !important;
 }
 
 .step-card b {
@@ -667,24 +673,56 @@ button:disabled {
   font-size: 26px;
 }
 
-.reserve-button,
+.reserve-button {
+  width: 100%;
+  height: 58px;
+  margin-top: 22px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    135deg,
+    #facc15,
+    #eab308
+  ) !important;
+
+  color: #111 !important;
+
+  font-size: 17px;
+  font-weight: 900;
+
+  border: 1px solid rgba(250, 204, 21, 0.35);
+
+  box-shadow:
+    0 12px 30px rgba(234, 179, 8, 0.18),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.reserve-button:hover {
+  background: linear-gradient(
+    135deg,
+    #fde047,
+    #facc15
+  ) !important;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 16px 36px rgba(234, 179, 8, 0.24);
+}
+
 .start-button {
   width: 100%;
   height: 58px;
   margin-top: 22px;
   border-radius: 18px;
-  background: linear-gradient(135deg, var(--warning-soft), var(--warning));
-  color: #050816;
-  font-size: 17px;
-  font-weight: 900;
-  box-shadow: 0 18px 42px rgba(245, 158, 11, 0.22);
-}
 
-.reserve-button:hover,
-.start-button:hover {
-  background: linear-gradient(135deg, #fde047, var(--warning));
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px rgba(245, 158, 11, 0.25);
+  background: linear-gradient(
+    135deg,
+    #86efac,
+    #34d399
+  ) !important;
+
+  color: #05120a !important;
 }
 
 .cancel-reserve-button {
@@ -820,16 +858,15 @@ button:disabled {
 }
 
 .scooter-card:hover {
-  transform: translateY(-6px) scale(1.01);
-  border-color: rgba(110, 231, 183, 0.26) !important;
-  background:
-    radial-gradient(circle at top right, rgba(74, 222, 128, 0.12), transparent 34%),
-    radial-gradient(circle at top left, rgba(74, 222, 128, 0.08), transparent 26%),
-    linear-gradient(180deg, rgba(24, 28, 26, 0.92), rgba(8, 10, 10, 0.78)) !important;
+  transform: translateY(-4px);
+
+  background: var(--panel-bg) !important;
+
+  border-color: rgba(110, 231, 183, 0.16) !important;
+
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 26px 80px rgba(0,0,0,0.42),
-    0 0 42px rgba(74, 222, 128, 0.12) !important;
+    0 18px 50px rgba(0,0,0,0.42),
+    0 0 8px rgba(74,222,128,0.04) !important;
 }
 
 .scooter-card:hover h2 {
@@ -877,15 +914,15 @@ button:disabled {
 }
 
 .history-section:hover {
-  transform: translateY(-4px);
-  border-color: rgba(110, 231, 183, 0.18) !important;
-  background:
-    radial-gradient(circle at top left, rgba(74, 222, 128, 0.10), transparent 34%),
-    linear-gradient(180deg, rgba(22, 26, 24, 0.88), rgba(10, 12, 11, 0.72)) !important;
+  transform: translateY(-3px);
+
+  background: var(--panel-bg) !important;
+
+  border-color: rgba(110,231,183,0.15) !important;
+
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 24px 70px rgba(0,0,0,0.42),
-    0 0 36px rgba(74, 222, 128, 0.10) !important;
+    0 18px 50px rgba(0,0,0,0.42),
+    0 0 8px rgba(74,222,128,0.04) !important;
 }
 
 .history-header {
@@ -1151,15 +1188,15 @@ button:disabled {
 }
 
 .profile-card div:hover {
-  transform: translateY(-3px);
-  border-color: rgba(110, 231, 183, 0.22) !important;
-  background:
-    radial-gradient(circle at top left, rgba(74, 222, 128, 0.10), transparent 35%),
-    linear-gradient(180deg, rgba(24, 28, 26, 0.92), rgba(8, 10, 10, 0.78)) !important;
+  transform: translateY(-2px);
+
+  background: var(--panel-bg) !important;
+
+  border-color: rgba(110,231,183,0.15) !important;
+
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 16px 42px rgba(0,0,0,0.35),
-    0 0 28px rgba(74, 222, 128, 0.10);
+    0 14px 36px rgba(0,0,0,0.35),
+    0 0 6px rgba(74,222,128,0.04);
 }
 
 .profile-card span {
@@ -1251,15 +1288,15 @@ button:disabled {
 }
 
 .payments-block:hover {
-  transform: translateY(-3px);
-  border-color: rgba(110, 231, 183, 0.22) !important;
-  background:
-    radial-gradient(circle at top left, rgba(74, 222, 128, 0.10), transparent 35%),
-    linear-gradient(180deg, rgba(24, 28, 26, 0.92), rgba(8, 10, 10, 0.78)) !important;
+  transform: translateY(-2px);
+
+  background: var(--panel-bg) !important;
+
+  border-color: rgba(110,231,183,0.15) !important;
+
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    0 16px 42px rgba(0,0,0,0.35),
-    0 0 28px rgba(74, 222, 128, 0.10);
+    0 14px 36px rgba(0,0,0,0.35),
+    0 0 6px rgba(74,222,128,0.04);
 }
 
 .payments-block h3 {
@@ -1842,11 +1879,13 @@ button:disabled {
 }
 
 .admin-scooter-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(74, 222, 128, 0.28) !important;
+  transform: translateY(-2px);
+
+  border-color: rgba(110,231,183,0.16) !important;
+
   box-shadow:
-    0 22px 60px rgba(0,0,0,0.35),
-    0 0 22px rgba(74, 222, 128, 0.08);
+    0 16px 42px rgba(0,0,0,0.35),
+    0 0 6px rgba(74,222,128,0.04);
 }
 
 .scooter-model {
@@ -3240,8 +3279,7 @@ button:active,
 }
 
 .logout-button:hover,
-.logout-btn:hover,
-.navbar button:last-child:hover {
+.logout-btn:hover {
   background: rgba(239, 68, 68, 0.16) !important;
 
   border-color: rgba(239, 68, 68, 0.32) !important;
@@ -3331,9 +3369,7 @@ button,
 }
 
 .logout-button:hover,
-.logout-btn:hover,
-.header nav > button:last-child:hover,
-.header nav > .nav-button:last-child:hover {
+.logout-btn:hover {
   transform: translateY(-2px);
   background:
     linear-gradient(
@@ -4012,7 +4048,6 @@ select option,
   z-index: 9999;
 }
 
-
 :root {
   --danger-soft: rgba(239, 68, 68, 0.16);
   --danger-border: rgba(239, 68, 68, 0.36);
@@ -4116,16 +4151,6 @@ select option,
     inset 0 1px 0 rgba(255,255,255,0.30) !important;
 }
 
-.reserve-button:hover,
-.start-button:hover {
-  transform: translateY(-2px) !important;
-  filter: brightness(1.04) !important;
-  box-shadow:
-    0 20px 48px rgba(52, 211, 153, 0.28),
-    0 0 34px rgba(110, 231, 183, 0.18),
-    inset 0 1px 0 rgba(255,255,255,0.34) !important;
-}
-
 .cancel-reserve-button,
 .finish-button,
 .reserve-button:disabled,
@@ -4192,7 +4217,6 @@ select option,
 }
 
 .header nav > button:last-child:hover,
-.header nav > .nav-button:last-child:hover,
 .logout-button:hover,
 .logout-btn:hover {
   transform: translateY(-2px) !important;
@@ -4802,7 +4826,6 @@ select option,
   }
 }
 
-
 .parking-balloon {
   padding: 10px;
   min-width: 220px;
@@ -4819,4 +4842,1117 @@ select option,
   color: #d1d5db;
   font-size: 14px;
   line-height: 1.5;
+}
+
+.logout-button,
+.logout-btn {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.025)
+    ) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+.logout-button:hover,
+.logout-btn:hover {
+  transform: translateY(-2px);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(239, 68, 68, 0.18),
+      rgba(127, 29, 29, 0.14)
+    ) !important;
+  border-color: rgba(239, 68, 68, 0.36) !important;
+  color: #fca5a5 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 14px 34px rgba(0, 0, 0, 0.32),
+    0 0 26px rgba(239, 68, 68, 0.17) !important;
+}
+
+.header nav > .nav-button:not(.logout-button):not(.logout-btn),
+.header nav > button.nav-button:not(.logout-button):not(.logout-btn) {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.025)
+    ) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+.header nav > .nav-button:not(.logout-button):not(.logout-btn):hover,
+.header nav > button.nav-button:not(.logout-button):not(.logout-btn):hover {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(74, 222, 128, 0.13),
+      rgba(34, 197, 94, 0.07)
+    ) !important;
+  border-color: rgba(110, 231, 183, 0.28) !important;
+  color: #86efac !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 14px 32px rgba(0, 0, 0, 0.28),
+    0 0 24px rgba(74, 222, 128, 0.11) !important;
+}
+
+.logout-btn {
+  border: 1px solid rgba(255, 80, 80, 0.35);
+  color: #ffb4b4;
+
+  background: linear-gradient(
+    135deg,
+    rgba(120, 20, 20, 0.25),
+    rgba(60, 10, 10, 0.15)
+  );
+
+  box-shadow:
+    inset 0 0 20px rgba(255, 60, 60, 0.08),
+    0 0 15px rgba(255, 60, 60, 0.08);
+
+  transition: all 0.25s ease;
+}
+
+.logout-btn:hover {
+  color: #fff;
+
+  border-color: rgba(255, 80, 80, 0.7);
+
+  background: linear-gradient(
+    135deg,
+    rgba(180, 35, 35, 0.35),
+    rgba(90, 15, 15, 0.25)
+  );
+
+  box-shadow:
+    0 0 25px rgba(255, 60, 60, 0.25),
+    inset 0 0 20px rgba(255, 80, 80, 0.15);
+
+  transform: translateY(-2px);
+}
+:where(
+  .stats-card,
+  .step-card,
+  .control-panel,
+  .history-section,
+  .history-card,
+  .admin-block,
+  .admin-card,
+  .admin-scooter-card,
+  .admin-stat-card,
+  .income-chart,
+  .admin-users-card,
+  .revenue-card,
+  .scooters-card,
+  .mini-stats div,
+  .profile-modal,
+  .support-modal,
+  .auth-modal,
+  .delete-modal,
+  .payments-block,
+  .profile-card div,
+  .safety-detail-card,
+  .safety-rule-card,
+  .safety-text-panel,
+  .safety-ban-list > div,
+  .map-box,
+  .ride-panel,
+  .reserve-panel,
+  .finished-ride,
+  .info-grid div,
+  .user-row,
+  .payment-row,
+  .chart-tabs,
+  .system-status
+) {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    background 0.28s ease,
+    filter 0.28s ease;
+}
+
+:where(
+  .stats-card,
+  .step-card,
+  .control-panel,
+  .history-section,
+  .history-card,
+  .admin-block,
+  .admin-card,
+  .admin-scooter-card,
+  .admin-stat-card,
+  .income-chart,
+  .admin-users-card,
+  .revenue-card,
+  .scooters-card,
+  .mini-stats div,
+  .profile-modal,
+  .support-modal,
+  .auth-modal,
+  .delete-modal,
+  .payments-block,
+  .profile-card div,
+  .safety-detail-card,
+  .safety-rule-card,
+  .safety-text-panel,
+  .safety-ban-list > div,
+  .ride-panel,
+  .reserve-panel,
+  .finished-ride,
+  .info-grid div,
+  .user-row,
+  .payment-row
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(110, 231, 183, 0.16), transparent 34%),
+    linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.055), transparent);
+  transition: opacity 0.28s ease;
+}
+
+:where(
+  .stats-card,
+  .step-card,
+  .control-panel,
+  .history-section,
+  .history-card,
+  .admin-block,
+  .admin-card,
+  .admin-scooter-card,
+  .admin-stat-card,
+  .income-chart,
+  .admin-users-card,
+  .revenue-card,
+  .scooters-card,
+  .mini-stats div,
+  .payments-block,
+  .profile-card div,
+  .safety-detail-card,
+  .safety-rule-card,
+  .safety-text-panel,
+  .ride-panel,
+  .reserve-panel,
+  .finished-ride,
+  .info-grid div,
+  .user-row,
+  .payment-row
+):hover {
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(110, 231, 183, 0.32) !important;
+  background:
+    radial-gradient(circle at top left, rgba(74, 222, 128, 0.13), transparent 36%),
+    linear-gradient(180deg, rgba(24, 30, 27, 0.94), rgba(8, 10, 10, 0.78)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 24px 70px rgba(0, 0, 0, 0.45),
+    0 0 34px rgba(74, 222, 128, 0.13) !important;
+}
+
+:where(
+  .stats-card,
+  .step-card,
+  .control-panel,
+  .history-section,
+  .history-card,
+  .admin-block,
+  .admin-card,
+  .admin-scooter-card,
+  .admin-stat-card,
+  .income-chart,
+  .admin-users-card,
+  .revenue-card,
+  .scooters-card,
+  .mini-stats div,
+  .payments-block,
+  .profile-card div,
+  .safety-detail-card,
+  .safety-rule-card,
+  .safety-text-panel,
+  .ride-panel,
+  .reserve-panel,
+  .finished-ride,
+  .info-grid div,
+  .user-row,
+  .payment-row
+):hover::after {
+  opacity: 1;
+}
+
+.safety-ban-list > div:hover,
+.danger-panel:hover,
+.cancel-reserve-button:hover,
+.finish-button:hover,
+.profile-logout:hover,
+.logout-btn:hover {
+  border-color: rgba(239, 68, 68, 0.38) !important;
+  background:
+    radial-gradient(circle at top left, rgba(239, 68, 68, 0.16), transparent 36%),
+    linear-gradient(180deg, rgba(55, 20, 20, 0.88), rgba(12, 8, 8, 0.8)) !important;
+  color: #fecaca !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 22px 60px rgba(0, 0, 0, 0.44),
+    0 0 34px rgba(239, 68, 68, 0.16) !important;
+}
+
+.chart-bar:hover {
+  transform: translateY(-8px) scaleY(1.03);
+  filter: brightness(1.08);
+  box-shadow:
+    0 0 28px rgba(110, 231, 183, 0.45),
+    0 0 54px rgba(74, 222, 128, 0.22) !important;
+}
+
+.header-user,
+.nav-button,
+button,
+.button-link,
+.admin-actions button,
+.chart-tabs button {
+  transition:
+    transform 0.22s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    color 0.25s ease,
+    filter 0.25s ease;
+}
+
+.header-user:hover,
+.nav-button:hover,
+.admin-actions button:hover,
+.chart-tabs button:hover {
+  filter: brightness(1.06);
+}
+
+input,
+textarea,
+select,
+.profile-input,
+.support-textarea,
+.admin-form input,
+.admin-form select,
+.create-form input,
+.create-form select {
+  transition:
+    transform 0.22s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+input:hover,
+textarea:hover,
+select:hover,
+.profile-input:hover,
+.support-textarea:hover,
+.admin-form input:hover,
+.admin-form select:hover,
+.create-form input:hover,
+.create-form select:hover {
+  transform: translateY(-1px);
+  border-color: rgba(110, 231, 183, 0.28) !important;
+  box-shadow:
+    0 0 0 3px rgba(74, 222, 128, 0.035),
+    0 0 24px rgba(74, 222, 128, 0.09) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.profile-input:focus,
+.support-textarea:focus,
+.admin-form input:focus,
+.admin-form select:focus,
+.create-form input:focus,
+.create-form select:focus {
+  transform: translateY(-1px);
+  border-color: rgba(110, 231, 183, 0.52) !important;
+  box-shadow:
+    0 0 0 4px rgba(74, 222, 128, 0.075),
+    0 0 30px rgba(74, 222, 128, 0.16) !important;
+}
+
+.map-box:hover {
+  transform: translateY(-4px);
+  border-color: rgba(110, 231, 183, 0.34) !important;
+  box-shadow:
+    0 32px 92px rgba(0, 0, 0, 0.58),
+    0 0 44px rgba(74, 222, 128, 0.14) !important;
+}
+
+@media (max-width: 768px) {
+  :where(
+    .stats-card,
+    .step-card,
+    .control-panel,
+    .history-section,
+    .history-card,
+    .admin-block,
+    .admin-card,
+    .admin-scooter-card,
+    .admin-stat-card,
+    .income-chart,
+    .admin-users-card,
+    .revenue-card,
+    .scooters-card,
+    .mini-stats div,
+    .payments-block,
+    .profile-card div,
+    .safety-detail-card,
+    .safety-rule-card,
+    .safety-text-panel,
+    .safety-ban-list > div,
+    .ride-panel,
+    .reserve-panel,
+    .finished-ride,
+    .info-grid div,
+    .user-row,
+    .payment-row,
+    .map-box
+  ):hover {
+    transform: translateY(-3px);
+  }
+}
+
+:where(
+  .stats-card,
+  .step-card,
+  .control-panel,
+  .history-section,
+  .history-card,
+  .admin-block,
+  .admin-card,
+  .admin-scooter-card,
+  .admin-stat-card,
+  .income-chart,
+  .admin-users-card,
+  .revenue-card,
+  .scooters-card,
+  .mini-stats div,
+  .payments-block,
+  .profile-card div,
+  .safety-detail-card,
+  .safety-rule-card,
+  .safety-text-panel,
+  .ride-panel,
+  .finished-ride,
+  .info-grid div,
+  .user-row,
+  .payment-row
+):hover {
+  transform: translateY(-3px) scale(1.004) !important;
+
+  border-color: rgba(110, 231, 183, 0.18) !important;
+
+  background:
+    radial-gradient(circle at top left, rgba(74, 222, 128, 0.045), transparent 38%),
+    linear-gradient(180deg, rgba(21, 25, 23, 0.88), rgba(8, 10, 10, 0.72)) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 18px 46px rgba(0, 0, 0, 0.36),
+    0 0 16px rgba(74, 222, 128, 0.045) !important;
+
+  filter: none !important;
+}
+
+.scooter-card:hover {
+  transform: translateY(-4px) scale(1.004) !important;
+
+  border-color: rgba(110, 231, 183, 0.18) !important;
+
+  background:
+    radial-gradient(circle at top right, rgba(74, 222, 128, 0.055), transparent 34%),
+    radial-gradient(circle at top left, rgba(74, 222, 128, 0.04), transparent 28%),
+    linear-gradient(180deg, rgba(23, 27, 25, 0.9), rgba(8, 10, 10, 0.76)) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 18px 46px rgba(0, 0, 0, 0.36),
+    0 0 16px rgba(74, 222, 128, 0.045) !important;
+
+  filter: none !important;
+}
+
+.scooter-card:hover h2 {
+  text-shadow: 0 0 10px rgba(110, 231, 183, 0.12) !important;
+}
+
+.info-grid div:hover {
+  transform: translateY(-2px) !important;
+
+  border-color: rgba(110, 231, 183, 0.16) !important;
+
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02)) !important;
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.24),
+    0 0 12px rgba(74, 222, 128, 0.035) !important;
+}
+
+.reserve-panel {
+  padding: 18px;
+
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.13), transparent 46%),
+    linear-gradient(180deg, rgba(74, 46, 12, 0.42), rgba(18, 14, 8, 0.64)) !important;
+
+  border: 1px solid rgba(245, 158, 11, 0.34) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 14px 36px rgba(0, 0, 0, 0.32),
+    0 0 16px rgba(245, 158, 11, 0.07) !important;
+}
+
+.reserve-panel:hover {
+  transform: translateY(-3px) scale(1.004) !important;
+
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.16), transparent 46%),
+    linear-gradient(180deg, rgba(80, 50, 14, 0.48), rgba(20, 15, 8, 0.66)) !important;
+
+  border-color: rgba(245, 158, 11, 0.46) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 42px rgba(0, 0, 0, 0.34),
+    0 0 18px rgba(245, 158, 11, 0.095) !important;
+
+  filter: none !important;
+}
+
+.reserve-panel:hover::after {
+  opacity: 0 !important;
+}
+
+.reserve-panel .reserve-title {
+  color: #facc15 !important;
+  text-shadow: 0 0 12px rgba(250, 204, 21, 0.18);
+}
+
+.reserve-panel .reserve-time {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
+}
+
+.cancel-reserve-button {
+  background:
+    linear-gradient(180deg, rgba(95, 34, 30, 0.72), rgba(45, 18, 16, 0.78)) !important;
+
+  border: 1px solid rgba(239, 68, 68, 0.34) !important;
+  color: #fecaca !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 12px 30px rgba(239, 68, 68, 0.10) !important;
+}
+
+.cancel-reserve-button:hover {
+  transform: translateY(-2px) !important;
+
+  background:
+    linear-gradient(180deg, rgba(110, 38, 34, 0.78), rgba(52, 20, 18, 0.82)) !important;
+
+  border-color: rgba(239, 68, 68, 0.48) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 14px 34px rgba(239, 68, 68, 0.14),
+    0 0 16px rgba(239, 68, 68, 0.09) !important;
+}
+
+.start-button:hover,
+.reserve-button:hover {
+  transform: translateY(-2px) !important;
+
+  box-shadow:
+    0 14px 34px rgba(52, 211, 153, 0.18),
+    0 0 16px rgba(110, 231, 183, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+
+  filter: none !important;
+}
+
+.admin-scooter-card:hover,
+.user-row:hover,
+.payment-row:hover {
+  transform: translateX(3px) !important;
+
+  border-color: rgba(110, 231, 183, 0.16) !important;
+
+  background:
+    linear-gradient(90deg, rgba(74, 222, 128, 0.035), rgba(255, 255, 255, 0.012)) !important;
+
+  box-shadow:
+    inset 0 0 26px rgba(74, 222, 128, 0.025),
+    0 12px 32px rgba(0, 0, 0, 0.28) !important;
+}
+
+.chart-bar:hover {
+  transform: translateY(-5px) scaleY(1.02) !important;
+  filter: brightness(1.04) !important;
+
+  box-shadow:
+    0 0 18px rgba(110, 231, 183, 0.28),
+    0 0 32px rgba(74, 222, 128, 0.12) !important;
+}
+
+.map-box:hover {
+  transform: translateY(-3px) !important;
+
+  border-color: rgba(110, 231, 183, 0.22) !important;
+
+  box-shadow:
+    0 26px 76px rgba(0, 0, 0, 0.52),
+    0 0 20px rgba(74, 222, 128, 0.06) !important;
+}
+
+.safety-ban-list > div:hover,
+.danger-panel:hover,
+.finish-button:hover,
+.profile-logout:hover,
+.logout-btn:hover {
+  border-color: rgba(239, 68, 68, 0.38) !important;
+
+  background:
+    radial-gradient(circle at top left, rgba(239, 68, 68, 0.10), transparent 38%),
+    linear-gradient(180deg, rgba(46, 18, 18, 0.86), rgba(12, 8, 8, 0.78)) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 16px 42px rgba(0, 0, 0, 0.34),
+    0 0 16px rgba(239, 68, 68, 0.08) !important;
+}
+
+@media (max-width: 768px) {
+  :where(
+    .stats-card,
+    .step-card,
+    .control-panel,
+    .history-section,
+    .history-card,
+    .admin-block,
+    .admin-card,
+    .admin-scooter-card,
+    .admin-stat-card,
+    .income-chart,
+    .admin-users-card,
+    .revenue-card,
+    .scooters-card,
+    .mini-stats div,
+    .payments-block,
+    .profile-card div,
+    .safety-detail-card,
+    .safety-rule-card,
+    .safety-text-panel,
+    .safety-ban-list > div,
+    .ride-panel,
+    .reserve-panel,
+    .finished-ride,
+    .info-grid div,
+    .user-row,
+    .payment-row,
+    .map-box
+  ):hover {
+    transform: translateY(-2px) !important;
+  }
+}
+
+button::before,
+.button-link::before,
+.nav-button::before,
+.hero button::after,
+.reserve-button::after,
+.start-button::after,
+.topup-button::after,
+.save-profile-button::after,
+.support-button::after {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+}
+
+.map-box,
+.map-box:hover {
+  transform: none !important;
+
+  border-color: rgba(74, 222, 128, 0.18) !important;
+
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.55),
+    0 0 45px rgba(74, 222, 128, 0.08) !important;
+
+  filter: none !important;
+}
+
+.control-panel,
+.control-panel:hover,
+.scooter-card,
+.scooter-card:hover {
+  transform: none !important;
+
+  background: var(--panel-bg) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 24px 70px rgba(0, 0, 0, 0.38) !important;
+
+  filter: none !important;
+}
+
+.control-panel:hover h3,
+.scooter-card:hover h2,
+.scooter-card:hover h3 {
+  text-shadow: none !important;
+}
+
+.info-grid div {
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease !important;
+}
+
+.info-grid div:hover {
+  transform: translateY(-3px) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.065),
+      rgba(255,255,255,0.028)
+    ) !important;
+
+  border-color: rgba(110, 231, 183, 0.22) !important;
+
+  box-shadow:
+    0 12px 28px rgba(0,0,0,0.32),
+    0 0 12px rgba(74,222,128,0.06) !important;
+
+  filter: none !important;
+}
+
+.reserve-button,
+button.reserve-button,
+.control-panel .reserve-button {
+  width: 100% !important;
+  height: 58px !important;
+  margin-top: 22px !important;
+  border-radius: 18px !important;
+
+  background:
+    linear-gradient(135deg, #fde047, #facc15, #eab308) !important;
+
+  color: #111111 !important;
+
+  border: 1px solid rgba(250, 204, 21, 0.55) !important;
+
+  font-size: 17px !important;
+  font-weight: 900 !important;
+
+  box-shadow:
+    0 14px 30px rgba(234, 179, 8, 0.22),
+    0 0 16px rgba(250, 204, 21, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.24) !important;
+
+  filter: none !important;
+}
+
+.reserve-button:hover,
+button.reserve-button:hover,
+.control-panel .reserve-button:hover {
+  transform: translateY(-2px) !important;
+
+  background:
+    linear-gradient(135deg, #fef08a, #fde047, #facc15) !important;
+
+  color: #111111 !important;
+
+  border-color: rgba(250, 204, 21, 0.75) !important;
+
+  box-shadow:
+    0 16px 34px rgba(234, 179, 8, 0.26),
+    0 0 20px rgba(250, 204, 21, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.26) !important;
+
+  filter: none !important;
+}
+
+.start-button:not(:disabled),
+button.start-button:not(:disabled),
+.control-panel .start-button:not(:disabled) {
+  background:
+    linear-gradient(135deg, #86efac, #34d399) !important;
+
+  color: #05120a !important;
+
+  border: 1px solid rgba(134, 239, 172, 0.38) !important;
+
+  box-shadow:
+    0 14px 30px rgba(34, 197, 94, 0.18),
+    0 0 16px rgba(74, 222, 128, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.22) !important;
+
+  filter: none !important;
+}
+
+.start-button:not(:disabled):hover,
+button.start-button:not(:disabled):hover,
+.control-panel .start-button:not(:disabled):hover {
+  transform: translateY(-2px) !important;
+
+  background:
+    linear-gradient(135deg, #bbf7d0, #6ee7b7, #34d399) !important;
+
+  color: #03120a !important;
+
+  border-color: rgba(134, 239, 172, 0.55) !important;
+
+  box-shadow:
+    0 16px 34px rgba(34, 197, 94, 0.22),
+    0 0 20px rgba(74, 222, 128, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.25) !important;
+
+  filter: none !important;
+}
+
+.start-button:disabled,
+button.start-button:disabled,
+.control-panel .start-button:disabled {
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(105, 32, 26, 0.92),
+      rgba(55, 18, 16, 0.96)
+    ) !important;
+
+  color: #ffd6d6 !important;
+
+  border: 1px solid rgba(239, 68, 68, 0.42) !important;
+
+  box-shadow:
+    0 14px 30px rgba(0,0,0,0.34),
+    0 0 16px rgba(239,68,68,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.05) !important;
+
+  transform: none !important;
+  filter: none !important;
+}
+
+.start-button:disabled:hover,
+button.start-button:disabled:hover,
+.control-panel .start-button:disabled:hover {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(115, 36, 29, 0.94),
+      rgba(60, 20, 18, 0.98)
+    ) !important;
+
+  color: #ffd6d6 !important;
+
+  border-color: rgba(239, 68, 68, 0.52) !important;
+
+  box-shadow:
+    0 14px 30px rgba(0,0,0,0.34),
+    0 0 18px rgba(239,68,68,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.05) !important;
+
+  transform: none !important;
+  filter: none !important;
+}
+
+.cancel-reserve-button,
+.cancel-reserve-button:hover {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(100, 30, 24, 0.90),
+      rgba(42, 14, 13, 0.94)
+    ) !important;
+
+  color: #ffd6d6 !important;
+
+  border: 1px solid rgba(239,68,68,0.38) !important;
+
+  box-shadow:
+    0 12px 28px rgba(0,0,0,0.34),
+    0 0 12px rgba(239,68,68,0.10) !important;
+
+  filter: none !important;
+}
+
+.cancel-reserve-button:hover {
+  transform: translateY(-2px) !important;
+}
+
+.reserve-panel,
+.reserve-panel:hover {
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(245, 158, 11, 0.15),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(45, 31, 12, 0.78),
+      rgba(14, 11, 8, 0.80)
+    ) !important;
+
+  border: 1px solid rgba(245, 158, 11, 0.42) !important;
+
+  box-shadow:
+    0 16px 36px rgba(0,0,0,0.40),
+    0 0 14px rgba(245,158,11,0.09),
+    inset 0 1px 0 rgba(255,255,255,0.035) !important;
+
+  filter: none !important;
+}
+
+.reserve-panel:hover {
+  transform: translateY(-2px) !important;
+}
+
+.finished-ride {
+  margin-top: 22px !important;
+  padding: 0 !important;
+  border-radius: 24px !important;
+
+  background:
+    radial-gradient(circle at top left, rgba(110, 231, 183, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(22, 26, 25, 0.90), rgba(10, 12, 13, 0.90)) !important;
+
+  border: 1px solid rgba(110, 231, 183, 0.16) !important;
+  overflow: hidden !important;
+
+  box-shadow:
+    0 16px 36px rgba(0,0,0,0.36),
+    0 0 12px rgba(74,222,128,0.05) !important;
+}
+
+.finished-ride:hover {
+  transform: none !important;
+  filter: none !important;
+}
+
+.finished-toggle {
+  width: 100% !important;
+  height: 74px !important;
+  padding: 0 20px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  color: #8ff0bd !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+}
+
+.finished-toggle:hover {
+  transform: none !important;
+  background: rgba(110, 231, 183, 0.04) !important;
+  box-shadow: none !important;
+  color: #9af5c7 !important;
+}
+
+.finished-toggle span {
+  text-align: left !important;
+}
+
+.finished-toggle b {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 50% !important;
+  background: rgba(110, 231, 183, 0.10) !important;
+  border: 1px solid rgba(110, 231, 183, 0.28) !important;
+
+  color: #8ff0bd !important;
+  font-size: 24px !important;
+}
+
+.finished-info {
+  padding: 0 22px 22px !important;
+  animation: openRideInfo 0.22s ease both !important;
+}
+
+.finished-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  padding: 15px 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+.finished-row:last-child {
+  border-bottom: none !important;
+}
+
+.finished-row span {
+  color: #9ca3af !important;
+  font-size: 16px !important;
+}
+
+.finished-row strong {
+  color: #fff !important;
+  font-size: 17px !important;
+  font-weight: 900 !important;
+}
+
+@keyframes openRideInfo {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reserve-panel {
+  padding: 18px !important;
+}
+
+.reserve-panel .start-button,
+.reserve-panel .cancel-reserve-button {
+  min-height: 56px !important;
+  height: auto !important;
+  padding: 14px 18px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  text-align: center !important;
+}
+
+.start-button:disabled,
+button.start-button:disabled,
+.control-panel .start-button:disabled {
+  min-height: 58px !important;
+  height: auto !important;
+  padding: 14px 18px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  text-align: center !important;
+}
+
+.admin-actions button:nth-child(1) {
+  background: rgba(34, 197, 94, 0.10) !important;
+  border: 1px solid rgba(34, 197, 94, 0.35) !important;
+  color: #86efac !important;
+  box-shadow: none !important;
+}
+
+.admin-actions button:nth-child(1):hover {
+  background: rgba(34, 197, 94, 0.18) !important;
+  border-color: rgba(34, 197, 94, 0.48) !important;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.20) !important;
+}
+
+.admin-actions button:nth-child(2) {
+  background: rgba(239, 68, 68, 0.10) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  color: #f87171 !important;
+  box-shadow: none !important;
+}
+
+.admin-actions button:nth-child(2):hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: rgba(239, 68, 68, 0.48) !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.20) !important;
+}
+
+.admin-actions button:nth-child(3) {
+  background: rgba(245, 158, 11, 0.10) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  color: #fbbf24 !important;
+  box-shadow: none !important;
+}
+
+.admin-actions button:nth-child(3):hover {
+  background: rgba(245, 158, 11, 0.18) !important;
+  border-color: rgba(245, 158, 11, 0.48) !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.20) !important;
+}
+
+.admin-actions button:nth-child(4) {
+  background: rgba(127, 29, 29, 0.22) !important;
+  border: 1px solid rgba(220, 38, 38, 0.40) !important;
+  color: #fecaca !important;
+  box-shadow: none !important;
+}
+
+.admin-actions button:nth-child(4):hover {
+  background: rgba(127, 29, 29, 0.38) !important;
+  border-color: rgba(220, 38, 38, 0.55) !important;
+  box-shadow: 0 0 18px rgba(220, 38, 38, 0.25) !important;
+}
+
+.admin-actions button::before,
+.admin-actions button::after {
+  display: none !important;
+  content: none !important;
+}
+
+.reserve-button,
+button.reserve-button,
+.control-panel .reserve-button {
+  background: linear-gradient(135deg, #fde047, #facc15, #eab308) !important;
+  color: #111 !important;
+  border: 1px solid rgba(250, 204, 21, 0.55) !important;
+}
+
+.reserve-button:hover,
+button.reserve-button:hover,
+.control-panel .reserve-button:hover {
+  background: linear-gradient(135deg, #fef08a, #fde047, #facc15) !important;
+  color: #111 !important;
+  box-shadow:
+    0 16px 34px rgba(234, 179, 8, 0.26),
+    0 0 20px rgba(250, 204, 21, 0.14) !important;
 }

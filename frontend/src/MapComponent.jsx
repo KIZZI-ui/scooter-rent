@@ -44,6 +44,7 @@ const refreshMapSize = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
   const [reserveSecondsLeft, setReserveSecondsLeft] = useState(0);
+  const [showFinishedDetails, setShowFinishedDetails] = useState(false);
 
   const [tariff, setTariff] = useState({
     startPrice: 40,
@@ -238,6 +239,10 @@ const parkingZones = [
       setCost(tariff.startPrice + minutes * tariff.dynamicMinutePrice);
     }
   }, [seconds, rideStarted, tariff]);
+
+useEffect(() => {
+  refreshMapSize();
+}, [showFinishedDetails, finishedRide]);
 
   useEffect(() => {
     if (!selectedScooter?.reservedUntil || selectedScooter.status !== "reserved") {
@@ -439,6 +444,8 @@ const parkingZones = [
       price: savedRide.ride.cost,
     });
 
+setShowFinishedDetails(false);
+
     await loadRides();
 
     showMessage("Поездка завершена", "success");
@@ -637,27 +644,44 @@ options={{
           )}
 
           {finishedRide && (
-            <div className="finished-ride">
-              <div className="finished-header">Поездка завершена</div>
+  <div className="finished-ride">
+    <button
+  className="finished-toggle"
+  onClick={() => {
+    setShowFinishedDetails(!showFinishedDetails);
 
-              <div className="finished-info">
-                <div className="finished-row">
-                  <span>Самокат</span>
-                  <strong>{finishedRide.scooter}</strong>
-                </div>
+    setTimeout(() => {
+      refreshMapSize();
+    }, 80);
+  }}
+>
+      <span>Подробнее о поездке</span>
 
-                <div className="finished-row">
-                  <span>Время</span>
-                  <strong>{finishedRide.time} сек.</strong>
-                </div>
+      <b>
+        {showFinishedDetails ? "−" : "+"}
+      </b>
+    </button>
 
-                <div className="finished-row">
-                  <span>Стоимость</span>
-                  <strong>{finishedRide.price} ₽</strong>
-                </div>
-              </div>
-            </div>
-          )}
+    {showFinishedDetails && (
+      <div className="finished-info">
+        <div className="finished-row">
+          <span>Самокат</span>
+          <strong>{finishedRide.scooter}</strong>
+        </div>
+
+        <div className="finished-row">
+          <span>Время</span>
+          <strong>{finishedRide.time} сек.</strong>
+        </div>
+
+        <div className="finished-row">
+          <span>Стоимость</span>
+          <strong>{finishedRide.price} ₽</strong>
+        </div>
+      </div>
+    )}
+  </div>
+)}
         </aside>
       </div>
 
