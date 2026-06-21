@@ -3,6 +3,29 @@ import "./App.css";
 import MapComponent from "./MapComponent";
 import AdminPanel from "./AdminPanel";
 
+
+const API_URL = (() => {
+  const hostname = window.location.hostname;
+
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:5000";
+  }
+
+  if (hostname.startsWith("192.168.")) {
+    return `http://${hostname}:5000`;
+  }
+
+  return window.location.origin;
+})();
+
+
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+const isValidEmail = (email) => {
+  return EMAIL_REGEX.test(email.trim().toLowerCase());
+};
+
+
 function SafetyPage() {
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -335,12 +358,12 @@ function App() {
   useEffect(() => {
     if (!user?.id) return;
 
-    fetch(`http://localhost:5000/users/${user.id}/online`, {
+    fetch(`${API_URL}/users/${user.id}/online`, {
       method: "PUT",
     }).catch(() => {});
 
     const handleOffline = () => {
-      fetch(`http://localhost:5000/users/${user.id}/offline`, {
+      fetch(`${API_URL}/users/${user.id}/offline`, {
         method: "PUT",
         keepalive: true,
       }).catch(() => {});
@@ -366,7 +389,7 @@ function App() {
     if (!user) return;
 
     const response = await fetch(
-      `http://localhost:5000/users/${user.id}/payments`
+      `${API_URL}/users/${user.id}/payments`
     );
 
     const data = await response.json();
@@ -387,7 +410,7 @@ function App() {
 
   const topUpBalance = async () => {
     const response = await fetch(
-      `http://localhost:5000/users/${user.id}/topup`,
+      `${API_URL}/users/${user.id}/topup`,
       {
         method: "PUT",
         headers: {
@@ -538,12 +561,22 @@ function App() {
       return;
     }
 
-    const response = await fetch("http://localhost:5000/auth/register", {
+    const email = form.email.trim().toLowerCase();
+
+    if (!isValidEmail(email)) {
+      showMessage("Введите корректный email", "error");
+      return;
+    }
+
+    const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        ...form,
+        email,
+      }),
     });
 
     const data = await response.json();
@@ -562,13 +595,20 @@ function App() {
       return;
     }
 
-    const response = await fetch("http://localhost:5000/auth/login", {
+    const email = form.email.trim().toLowerCase();
+
+    if (!isValidEmail(email)) {
+      showMessage("Введите корректный email", "error");
+      return;
+    }
+
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: form.email,
+        email,
         password: form.password,
       }),
     });
@@ -596,7 +636,7 @@ function App() {
   const logout = async () => {
   if (user?.id) {
     try {
-      await fetch(`http://localhost:5000/users/${user.id}/offline`, {
+      await fetch(`${API_URL}/users/${user.id}/offline`, {
         method: "PUT",
       });
     } catch (error) {
@@ -922,6 +962,9 @@ function App() {
 
             <input
               name="email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
               placeholder="Email"
               value={form.email}
               onChange={handleChange}

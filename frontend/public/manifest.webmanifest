@@ -1,0 +1,21 @@
+{
+  "name": "ScooterRent",
+  "short_name": "ScooterRent",
+  "description": "Сервис аренды электросамокатов с картой, профилем, историей поездок и админ-панелью",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#34d399",
+  "lang": "ru-RU",
+  "categories": ["transport", "navigation", "travel"],
+  "icons": [
+    {
+      "src": "/scooter.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

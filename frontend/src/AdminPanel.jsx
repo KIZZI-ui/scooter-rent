@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
 
+const API_URL = (() => {
+  const hostname = window.location.hostname;
+
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:5000";
+  }
+
+  if (hostname.startsWith("192.168.")) {
+    return `http://${hostname}:5000`;
+  }
+
+  return window.location.origin;
+})();
+
 const metroCoords = {
   Арбатская: { latitude: 55.7522, longitude: 37.6045 },
   ВДНХ: { latitude: 55.821, longitude: 37.639 },
@@ -87,14 +101,14 @@ function AdminPanel() {
   };
 
   const loadScooters = async () => {
-    const res = await fetch("http://localhost:5000/scooters");
+    const res = await fetch(`${API_URL}/scooters`);
     const data = await res.json();
 
     setScooters(data);
   };
 
   const loadTariff = async () => {
-    const res = await fetch("http://localhost:5000/tariff");
+    const res = await fetch(`${API_URL}/tariff`);
     const data = await res.json();
 
     setTariff({
@@ -104,14 +118,14 @@ function AdminPanel() {
   };
 
 const loadUsers = async () => {
-  const res = await fetch("http://localhost:5000/users");
+  const res = await fetch(`${API_URL}/users`);
   const data = await res.json();
 
   setUsers(data);
 };
 
   const loadStats = async () => {
-    const res = await fetch("http://localhost:5000/admin-stats");
+    const res = await fetch(`${API_URL}/admin-stats`);
     const data = await res.json();
 
     setStats(data);
@@ -131,7 +145,7 @@ const loadUsers = async () => {
 }, []);
 
 const blockUser = async (id) => {
-  const response = await fetch(`http://localhost:5000/users/${id}/block`, {
+  const response = await fetch(`${API_URL}/users/${id}/block`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -150,7 +164,7 @@ const blockUser = async (id) => {
 };
 
 const unblockUser = async (id) => {
-  const response = await fetch(`http://localhost:5000/users/${id}/unblock`, {
+  const response = await fetch(`${API_URL}/users/${id}/unblock`, {
     method: "PUT",
   });
 
@@ -181,7 +195,7 @@ const unblockUser = async (id) => {
       status: "available",
     };
 
-    const response = await fetch("http://localhost:5000/scooters", {
+    const response = await fetch(`${API_URL}/scooters`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -210,7 +224,7 @@ const unblockUser = async (id) => {
   };
 
   const updateStatus = async (id, status) => {
-    const response = await fetch(`http://localhost:5000/scooters/${id}/status`, {
+    const response = await fetch(`${API_URL}/scooters/${id}/status`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -229,7 +243,7 @@ const unblockUser = async (id) => {
   };
 
   const deleteScooter = async (id) => {
-    const response = await fetch(`http://localhost:5000/scooters/${id}`, {
+    const response = await fetch(`${API_URL}/scooters/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -247,7 +261,7 @@ const unblockUser = async (id) => {
   };
 
   const updateTariff = async () => {
-    const response = await fetch("http://localhost:5000/tariff", {
+    const response = await fetch(`${API_URL}/tariff`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

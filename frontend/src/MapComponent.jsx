@@ -1,6 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { YMaps, Map, Placemark, Polygon } from "@pbe/react-yandex-maps";
 
+
+const API_URL = (() => {
+  const hostname = window.location.hostname;
+
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:5000";
+  }
+
+  if (hostname.startsWith("192.168.")) {
+    return `http://${hostname}:5000`;
+  }
+
+  return window.location.origin;
+})();
+
+
 function MapComponent() {
   const mapRef = useRef(null);
 
@@ -45,6 +61,21 @@ const refreshMapSize = () => {
   const [messageType, setMessageType] = useState("success");
   const [reserveSecondsLeft, setReserveSecondsLeft] = useState(0);
   const [showFinishedDetails, setShowFinishedDetails] = useState(false);
+ const detectMobileMap = () => {
+  const width = Math.min(
+    window.innerWidth || 9999,
+    window.screen?.width || 9999
+  );
+
+  return (
+    width <= 1200 ||
+    window.matchMedia("(max-width: 1200px)").matches ||
+    window.matchMedia("(pointer: coarse)").matches ||
+    /Android|iPhone|iPad|iPod|Mobile|Telegram/i.test(navigator.userAgent)
+  );
+};
+
+  const [isMobileMap, setIsMobileMap] = useState(detectMobileMap);
 
   const [tariff, setTariff] = useState({
     startPrice: 40,
@@ -149,14 +180,14 @@ const parkingZones = [
   };
 
   const loadTariff = async () => {
-    const res = await fetch("http://localhost:5000/tariff");
+    const res = await fetch(`${API_URL}/tariff`);
     const data = await res.json();
 
     setTariff(data);
   };
 
   const loadScooters = async () => {
-    const res = await fetch("http://localhost:5000/scooters");
+    const res = await fetch(`${API_URL}/scooters`);
     const data = await res.json();
 
     setScooters(data);
@@ -183,7 +214,7 @@ const parkingZones = [
       return;
     }
 
-    const res = await fetch(`http://localhost:5000/rides/${currentUser.id}`);
+    const res = await fetch(`${API_URL}/rides/${currentUser.id}`);
     const data = await res.json();
 
     setRideHistory(data);
@@ -199,7 +230,7 @@ const parkingZones = [
 
   try {
     const response = await fetch(
-      `http://localhost:5000/rides/clear/${currentUser.id}`,
+      `${API_URL}/rides/clear/${currentUser.id}`,
       {
         method: "DELETE",
       }
@@ -216,6 +247,23 @@ const parkingZones = [
     console.log(error);
   }
 };
+
+  useEffect(() => {
+  const handleResize = () => {
+    setIsMobileMap(detectMobileMap());
+    setTimeout(refreshMapSize, 150);
+  };
+
+  handleResize();
+
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("orientationchange", handleResize);
+
+  return () => {
+    window.removeEventListener("resize", handleResize);
+    window.removeEventListener("orientationchange", handleResize);
+  };
+}, []);
 
   useEffect(() => {
     loadTariff();
@@ -244,6 +292,14 @@ useEffect(() => {
   refreshMapSize();
 }, [showFinishedDetails, finishedRide]);
 
+useEffect(() => {
+  const timer = setTimeout(() => {
+    refreshMapSize();
+  }, 250);
+
+  return () => clearTimeout(timer);
+}, [isMobileMap, selectedScooter?.id]);
+
   useEffect(() => {
     if (!selectedScooter?.reservedUntil || selectedScooter.status !== "reserved") {
       setReserveSecondsLeft(0);
@@ -269,7 +325,7 @@ useEffect(() => {
   }, [selectedScooter]);
 
   const updateScooterStatus = async (id, status) => {
-    const response = await fetch(`http://localhost:5000/scooters/${id}/status`, {
+    const response = await fetch(`${API_URL}/scooters/${id}/status`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -315,7 +371,7 @@ useEffect(() => {
     }
 
     const response = await fetch(
-      `http://localhost:5000/scooters/${selectedScooter.id}/reserve`,
+      `${API_URL}/scooters/${selectedScooter.id}/reserve`,
       {
         method: "POST",
       }
@@ -343,7 +399,7 @@ useEffect(() => {
 
   const cancelReserve = async () => {
     const response = await fetch(
-      `http://localhost:5000/scooters/${selectedScooter.id}/cancel-reserve`,
+      `${API_URL}/scooters/${selectedScooter.id}/cancel-reserve`,
       {
         method: "POST",
       }
@@ -402,7 +458,7 @@ useEffect(() => {
   };
 
   const finishRide = async () => {
-    const res = await fetch("http://localhost:5000/rides", {
+    const res = await fetch(`${API_URL}/rides`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -451,6 +507,38 @@ setShowFinishedDetails(false);
     showMessage("Поездка завершена", "success");
   };
 
+  const getDistanceToSelected = (coords) => {
+    if (!selectedScooter || !coords) return 0;
+
+    const latDiff = coords[0] - selectedScooter.latitude;
+    const lonDiff = coords[1] - selectedScooter.longitude;
+
+    return Math.sqrt(latDiff * latDiff + lonDiff * lonDiff);
+  };
+
+  const visibleParkingZones = isMobileMap
+  ? [...parkingZones]
+      .sort(
+        (a, b) =>
+          getDistanceToSelected(a.coords) - getDistanceToSelected(b.coords)
+      )
+      .slice(0, 2)
+  : parkingZones;
+
+const visibleScooters = isMobileMap
+  ? [
+      selectedScooter,
+      ...scooters
+        .filter((scooter) => scooter.id !== selectedScooter.id)
+        .sort(
+          (a, b) =>
+            getDistanceToSelected([a.latitude, a.longitude]) -
+            getDistanceToSelected([b.latitude, b.longitude])
+        )
+        .slice(0, 1),
+    ]
+  : scooters;
+
   if (!selectedScooter) {
     return <div className="loading">Загрузка карты...</div>;
   }
@@ -470,16 +558,21 @@ setShowFinishedDetails(false);
            <Map
   state={{
     center: [selectedScooter.latitude, selectedScooter.longitude],
-    zoom: 11,
+    zoom: isMobileMap ? 12 : 11,
   }}
   width="100%"
   height="100%"
+  options={{
+    suppressMapOpenBlock: true,
+    yandexMapDisablePoiInteractivity: true,
+  }}
   instanceRef={(ref) => {
     mapRef.current = ref;
+    setTimeout(refreshMapSize, 250);
   }}
 >
 
-{parkingZones.map((zone) => (
+{visibleParkingZones.map((zone) => (
   <Placemark
     key={zone.id}
     geometry={zone.coords}
@@ -493,8 +586,8 @@ setShowFinishedDetails(false);
     options={{
       iconLayout: "default#image",
       iconImageHref: "/parking.png",
-      iconImageSize: [42, 42],
-      iconImageOffset: [-21, -42],
+      iconImageSize: isMobileMap ? [22, 22] : [42, 42],
+      iconImageOffset: isMobileMap ? [-11, -22] : [-21, -42],
       cursor: "pointer",
     }}
   />
@@ -517,26 +610,32 @@ options={{
 }}
   />
 ))}
-              {scooters.map((scooter) => (
-                <Placemark
-                  key={scooter.id}
-                  geometry={[scooter.latitude, scooter.longitude]}
-                  onClick={() => setSelectedScooter(scooter)}
-                  properties={{
-                    hintContent: scooter.model,
-                  }}
-                  options={{
-                    iconLayout: "default#image",
-                    iconImageHref: "/scooter.png",
-                    iconImageSize:
-                      selectedScooter.id === scooter.id ? [58, 58] : [46, 46],
-                    iconImageOffset:
-                      selectedScooter.id === scooter.id
-                        ? [-29, -29]
-                        : [-23, -23],
-                  }}
-                />
-              ))}
+              {visibleScooters.map((scooter) => {
+                const isSelected = selectedScooter.id === scooter.id;
+
+                return (
+                  <Placemark
+                    key={scooter.id}
+                    geometry={[scooter.latitude, scooter.longitude]}
+                    onClick={() => setSelectedScooter(scooter)}
+                    properties={{
+                      hintContent: scooter.model,
+                    }}
+                    options={{
+                      iconLayout: "default#image",
+                      iconImageHref: "/scooter.png",
+                      iconImageSize: isSelected
+                        ? isMobileMap ? [30, 30] : [58, 58]
+                        : isMobileMap ? [16, 16] : [46, 46],
+                      iconImageOffset: isSelected
+                        ? isMobileMap ? [-15, -15] : [-29, -29]
+                        : isMobileMap ? [-8, -8] : [-23, -23],
+                      zIndex: isSelected ? 1000 : 10,
+                    }}
+                  />
+                );
+              })}
+
             </Map>
           </YMaps>
         </div>

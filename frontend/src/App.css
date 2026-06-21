@@ -2203,172 +2203,13 @@ button:disabled {
   letter-spacing: 1px;
 }
 
-@media (max-width: 1180px) {
-  .admin-scooter-card {
-    grid-template-columns: 1fr;
-    align-items: flex-start;
-  }
 
-  .admin-actions {
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-}
 
-@media (max-width: 1000px) {
-  .rental-wrapper,
-  .admin-stats-grid {
-    grid-template-columns: 1fr;
-  }
 
-  .hero h1 {
-    font-size: 44px;
-  }
 
-  .history-card {
-    grid-template-columns: 1fr 1fr;
-  }
 
-  .history-header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
-}
 
-@media (max-width: 900px) {
-  .steps-section {
-    padding: 20px 16px 32px;
-  }
 
-  .steps-grid,
-  .admin-form {
-    grid-template-columns: 1fr;
-  }
-
-  .steps-header h2 {
-    font-size: 32px;
-  }
-
-  .admin-page,
-  .admin-section {
-    padding: 70px 16px;
-  }
-
-  .admin-container h1,
-  .admin-section h1 {
-    font-size: 38px;
-  }
-}
-
-@media (max-width: 768px) {
-  .app {
-    padding-top: 132px;
-  }
-
-  .header {
-    height: auto;
-    padding: 14px 12px !important;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .logo {
-    font-size: 24px;
-  }
-
-  nav {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .nav-button {
-    padding: 9px 12px;
-    font-size: 14px;
-  }
-
-  .header-user {
-    width: 100%;
-    max-width: 260px;
-    margin-left: 0;
-  }
-
-  .hero {
-    min-height: 420px;
-    padding: 40px 20px;
-  }
-
-  .hero h1 {
-    font-size: 38px;
-  }
-
-  .hero p {
-    font-size: 18px;
-  }
-
-  .stats-grid,
-  .info-grid,
-  .history-card,
-  .mini-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-grid {
-    margin-top: 32px;
-  }
-
-  .map-section {
-    padding: 24px 16px 60px;
-  }
-
-  .map-box {
-    height: 360px;
-    min-height: 360px;
-    border-radius: 24px;
-  }
-
-  .control-panel,
-  .history-section,
-  .profile-modal,
-  .support-modal,
-  .auth-modal,
-  .delete-modal {
-    border-radius: 24px;
-  }
-
-  .control-panel {
-    padding: 22px;
-  }
-
-  .auth-modal,
-  .profile-modal,
-  .support-modal,
-  .delete-modal {
-    width: calc(100% - 32px);
-    padding: 26px;
-  }
-
-  .admin-actions {
-    flex-direction: column;
-  }
-
-  .admin-actions button {
-    width: 100%;
-  }
-
-  .notification {
-    left: 16px;
-    right: 16px;
-    min-width: auto;
-    text-align: center;
-  }
-
-  .footer-content {
-    padding: 36px 20px;
-  }
-}
 
 .notification,
 .map-message,
@@ -3109,21 +2950,7 @@ button:active,
     0 0 20px rgba(74,222,128,0.08);
 }
 
-@media (max-width: 900px) {
-  .users-toolbar {
-    grid-template-columns: 1fr !important;
-  }
 
-  .user-row {
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
-  }
-
-  .user-actions {
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-}
 
 .admin-scooter-card {
   grid-template-columns: 110px 100px 110px 130px minmax(360px, 1fr) !important;
@@ -3716,23 +3543,9 @@ button:active,
   transform: translateY(0) scale(0.97);
 }
 
-@media (max-width: 1180px) {
-  .admin-scooter-card {
-    grid-template-columns: 1fr;
-  }
 
-  .admin-actions {
-    min-width: 0;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-}
 
-@media (max-width: 900px) {
-  .users-toolbar {
-    grid-template-columns: 1fr;
-  }
-}
+
 
 select,
 .admin-form select,
@@ -4004,17 +3817,7 @@ select option,
   }
 }
 
-@media (max-width: 768px) {
-  .modal-overlay,
-  .delete-modal-overlay,
-  .user-profile-modal {
-    padding-top: 146px !important;
-  }
 
-  .profile-modal {
-    max-height: calc(100vh - 172px) !important;
-  }
-}
 
 .admin-form select,
 .create-form select,
@@ -4366,11 +4169,7 @@ select option,
   min-height: 620px !important;
 }
 
-@media (max-width: 1400px) {
-  .rental-wrapper {
-    grid-template-columns: minmax(0, 1fr) 300px !important;
-  }
-}
+
 
 .finished-ride button,
 .ride-panel button,
@@ -4805,26 +4604,7 @@ select option,
   animation-delay: 0.26s !important;
 }
 
-@media (max-width: 1000px) {
-  .safety-wide-grid,
-  .safety-rules-grid,
-  .safety-text-layout,
-  .safety-ban-list {
-    grid-template-columns: 1fr !important;
-  }
 
-  .safety-page {
-    padding: 72px 18px 80px !important;
-  }
-
-  .safety-hero h1 {
-    font-size: 44px !important;
-  }
-
-  .safety-section-title h2 {
-    font-size: 34px !important;
-  }
-}
 
 .parking-balloon {
   padding: 10px;
@@ -5194,39 +4974,7 @@ select:focus,
     0 0 44px rgba(74, 222, 128, 0.14) !important;
 }
 
-@media (max-width: 768px) {
-  :where(
-    .stats-card,
-    .step-card,
-    .control-panel,
-    .history-section,
-    .history-card,
-    .admin-block,
-    .admin-card,
-    .admin-scooter-card,
-    .admin-stat-card,
-    .income-chart,
-    .admin-users-card,
-    .revenue-card,
-    .scooters-card,
-    .mini-stats div,
-    .payments-block,
-    .profile-card div,
-    .safety-detail-card,
-    .safety-rule-card,
-    .safety-text-panel,
-    .safety-ban-list > div,
-    .ride-panel,
-    .reserve-panel,
-    .finished-ride,
-    .info-grid div,
-    .user-row,
-    .payment-row,
-    .map-box
-  ):hover {
-    transform: translateY(-3px);
-  }
-}
+
 
 :where(
   .stats-card,
@@ -5440,39 +5188,7 @@ select:focus,
     0 0 16px rgba(239, 68, 68, 0.08) !important;
 }
 
-@media (max-width: 768px) {
-  :where(
-    .stats-card,
-    .step-card,
-    .control-panel,
-    .history-section,
-    .history-card,
-    .admin-block,
-    .admin-card,
-    .admin-scooter-card,
-    .admin-stat-card,
-    .income-chart,
-    .admin-users-card,
-    .revenue-card,
-    .scooters-card,
-    .mini-stats div,
-    .payments-block,
-    .profile-card div,
-    .safety-detail-card,
-    .safety-rule-card,
-    .safety-text-panel,
-    .safety-ban-list > div,
-    .ride-panel,
-    .reserve-panel,
-    .finished-ride,
-    .info-grid div,
-    .user-row,
-    .payment-row,
-    .map-box
-  ):hover {
-    transform: translateY(-2px) !important;
-  }
-}
+
 
 button::before,
 .button-link::before,
@@ -5955,4 +5671,738 @@ button.reserve-button:hover,
   box-shadow:
     0 16px 34px rgba(234, 179, 8, 0.26),
     0 0 20px rgba(250, 204, 21, 0.14) !important;
+}
+
+
+
+
+
+.modal-overlay,
+.delete-modal-overlay {
+  background: rgba(0, 0, 0, 0.86) !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+  z-index: 1000000 !important;
+}
+
+.auth-modal,
+.support-modal,
+.profile-modal,
+.delete-modal,
+.user-profile-card {
+  background:
+    radial-gradient(circle at top left, rgba(74, 222, 128, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(9, 13, 15, 0.98), rgba(3, 6, 8, 0.98)) !important;
+  border: 1px solid rgba(110, 231, 183, 0.14) !important;
+  box-shadow:
+    0 26px 80px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.auth-modal input,
+.profile-input,
+.support-textarea {
+  background: rgba(0, 0, 0, 0.48) !important;
+  border-color: rgba(110, 231, 183, 0.16) !important;
+}
+
+.notification {
+  top: 92px !important;
+  left: 16px !important;
+  right: 16px !important;
+  width: auto !important;
+  max-width: 620px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  padding: 14px 18px !important;
+  border-radius: 18px !important;
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  z-index: 1000002 !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+}
+
+.notification.error {
+  background: rgba(72, 14, 14, 0.97) !important;
+  border: 1px solid rgba(248, 113, 113, 0.42) !important;
+  color: #fecaca !important;
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.52),
+    0 0 22px rgba(239, 68, 68, 0.16) !important;
+}
+
+.notification.success {
+  background: rgba(10, 58, 39, 0.96) !important;
+  border: 1px solid rgba(74, 222, 128, 0.38) !important;
+  color: #bbf7d0 !important;
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.52),
+    0 0 22px rgba(74, 222, 128, 0.14) !important;
+}
+
+.map-message,
+.custom-notification {
+  background: rgba(9, 13, 15, 0.96) !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+}
+
+
+
+.header {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(3, 7, 10, 1),
+      rgba(3, 7, 10, 0.98)
+    ) !important;
+  backdrop-filter: blur(18px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+  border-bottom: 1px solid rgba(110, 231, 183, 0.14) !important;
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.68),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset !important;
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 12% 50%, rgba(74, 222, 128, 0.10), transparent 26%),
+    linear-gradient(180deg, rgba(2, 6, 9, 1), rgba(2, 6, 9, 0.98));
+  pointer-events: none;
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(110, 231, 183, 0.28),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.modal-overlay,
+.delete-modal-overlay {
+  background: rgba(0, 0, 0, 0.86) !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+  z-index: 1000000 !important;
+}
+
+.auth-modal,
+.support-modal,
+.profile-modal,
+.delete-modal,
+.user-profile-card {
+  background:
+    radial-gradient(circle at top left, rgba(74, 222, 128, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(9, 13, 15, 0.98), rgba(3, 6, 8, 0.98)) !important;
+  border: 1px solid rgba(110, 231, 183, 0.14) !important;
+  box-shadow:
+    0 26px 80px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.notification {
+  top: 92px !important;
+  left: 16px !important;
+  right: 16px !important;
+  width: auto !important;
+  max-width: 620px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  padding: 14px 18px !important;
+  border-radius: 18px !important;
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  z-index: 1000002 !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+}
+
+.notification.error {
+  background: rgba(72, 14, 14, 0.97) !important;
+  border: 1px solid rgba(248, 113, 113, 0.42) !important;
+  color: #fecaca !important;
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.52),
+    0 0 22px rgba(239, 68, 68, 0.16) !important;
+}
+
+.notification.success {
+  background: rgba(10, 58, 39, 0.96) !important;
+  border: 1px solid rgba(74, 222, 128, 0.38) !important;
+  color: #bbf7d0 !important;
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.52),
+    0 0 22px rgba(74, 222, 128, 0.14) !important;
+}
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 900px) {
+  html,
+  body,
+  #root,
+  .app {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  body {
+    background-attachment: scroll !important;
+  }
+
+  .app {
+    padding-top: 0 !important;
+  }
+
+  .header {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    z-index: 50 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    padding: 14px 14px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 14px !important;
+    background:
+      radial-gradient(circle at 12% 32%, rgba(74, 222, 128, 0.10), transparent 32%),
+      linear-gradient(180deg, rgba(3, 7, 10, 1), rgba(3, 7, 10, 0.98)) !important;
+    border-bottom: 1px solid rgba(110, 231, 183, 0.16) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.58) !important;
+    backdrop-filter: blur(16px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(115%) !important;
+  }
+
+  .logo {
+    font-size: 28px !important;
+    line-height: 1 !important;
+    text-align: center !important;
+  }
+
+  nav {
+    width: 100% !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .nav-button,
+  .header-user {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 42px !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 10px 8px !important;
+    border-radius: 16px !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+
+  .header-user {
+    grid-column: span 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+  }
+
+  .header-user-name {
+    font-size: 14px !important;
+    line-height: 1 !important;
+  }
+
+  .header-user-balance {
+    font-size: 12px !important;
+    line-height: 1 !important;
+  }
+
+  .logout-btn,
+  .nav-button.logout-btn {
+    grid-column: span 1 !important;
+  }
+
+  .hero {
+    min-height: auto !important;
+    padding: 34px 16px 24px !important;
+    gap: 18px !important;
+  }
+
+  .hero h1 {
+    font-size: 36px !important;
+    line-height: 1.08 !important;
+    letter-spacing: -1px !important;
+  }
+
+  .hero p {
+    max-width: 360px !important;
+    font-size: 17px !important;
+    line-height: 1.45 !important;
+  }
+
+  .hero button {
+    width: min(100%, 330px) !important;
+    min-height: 56px !important;
+    padding: 15px 18px !important;
+    font-size: 18px !important;
+    border-radius: 20px !important;
+  }
+
+  .stats-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    margin: 24px 0 0 !important;
+    padding: 0 6px !important;
+  }
+
+  .stats-card {
+    padding: 18px 12px !important;
+    border-radius: 20px !important;
+  }
+
+  .stats-card span {
+    margin-bottom: 8px !important;
+    font-size: 13px !important;
+  }
+
+  .stats-card strong {
+    font-size: 32px !important;
+  }
+
+  .steps-section {
+    width: 100% !important;
+    padding: 24px 12px 26px !important;
+  }
+
+  .steps-header {
+    margin-bottom: 18px !important;
+  }
+
+  .steps-header span {
+    font-size: 12px !important;
+  }
+
+  .steps-header h2 {
+    font-size: 31px !important;
+    line-height: 1.1 !important;
+  }
+
+  .steps-header p {
+    font-size: 15px !important;
+    line-height: 1.45 !important;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .step-card {
+    padding: 20px 16px !important;
+    border-radius: 22px !important;
+  }
+
+  .step-card h3 {
+    margin: 12px 0 8px !important;
+    font-size: 22px !important;
+  }
+
+  .step-card p {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+  }
+
+  .map-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 10px 42px !important;
+    overflow: hidden !important;
+  }
+
+  .map-container,
+  .rental-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .rental-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .map-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 330px !important;
+    min-height: 330px !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+  }
+
+  .map-box > div,
+  .map-box ymaps,
+  .map-box canvas {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .control-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 20px 16px !important;
+    border-radius: 24px !important;
+    box-sizing: border-box !important;
+  }
+
+  .panel-header {
+    width: fit-content !important;
+    margin: 0 0 14px !important;
+    padding: 9px 14px !important;
+    font-size: 15px !important;
+  }
+
+  .control-panel h3 {
+    margin: 12px 0 18px !important;
+    font-size: 32px !important;
+    line-height: 1.08 !important;
+    text-align: center !important;
+  }
+
+  .info-grid {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .info-grid div {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 84px !important;
+    padding: 12px 10px !important;
+    border-radius: 17px !important;
+  }
+
+  .info-grid span {
+    margin-bottom: 7px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.4px !important;
+  }
+
+  .info-grid strong {
+    font-size: 23px !important;
+    line-height: 1.1 !important;
+  }
+
+  .reserve-button,
+  .start-button,
+  .cancel-reserve-button,
+  .finish-button {
+    width: 100% !important;
+    min-height: 54px !important;
+    height: auto !important;
+    margin-top: 16px !important;
+    padding: 14px 16px !important;
+    border-radius: 18px !important;
+    font-size: 17px !important;
+    line-height: 1.2 !important;
+  }
+
+  .reserve-panel,
+  .ride-panel,
+  .finished-ride {
+    margin-top: 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .ride-header,
+  .finished-header {
+    padding: 15px 16px !important;
+    font-size: 19px !important;
+  }
+
+  .ride-info,
+  .finished-info {
+    padding: 13px 16px !important;
+  }
+
+  .history-section {
+    width: calc(100% - 20px) !important;
+    margin: 20px auto 0 !important;
+    padding: 20px 16px !important;
+    border-radius: 24px !important;
+  }
+
+  .history-header {
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .history-header h2 {
+    font-size: 26px !important;
+  }
+
+  .history-card {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    padding: 15px !important;
+  }
+
+  .modal-overlay,
+  .delete-modal-overlay,
+  .user-profile-modal {
+    z-index: 1000000 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 14px !important;
+    overflow-y: auto !important;
+    background: rgba(0, 0, 0, 0.88) !important;
+    backdrop-filter: blur(14px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+  }
+
+  .support-modal,
+  .auth-modal,
+  .profile-modal,
+  .delete-modal,
+  .user-profile-card {
+    width: min(92vw, 390px) !important;
+    max-height: calc(100dvh - 32px) !important;
+    margin: auto !important;
+    padding: 22px 18px 20px !important;
+    border-radius: 22px !important;
+    overflow-y: auto !important;
+  }
+
+  .notification {
+    top: 14px !important;
+    left: 12px !important;
+    right: 12px !important;
+    max-width: none !important;
+    padding: 12px 14px !important;
+    border-radius: 16px !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    z-index: 1000002 !important;
+  }
+
+  .safety-page {
+    padding: 20px 12px 42px !important;
+  }
+
+  .safety-hero,
+  .safety-hero-pro,
+  .safety-detail-card,
+  .safety-text-panel,
+  .safety-rule-card,
+  .safety-ban-list div {
+    border-radius: 22px !important;
+  }
+
+  .safety-hero,
+  .safety-hero-pro {
+    padding: 24px 16px !important;
+  }
+
+  .safety-hero h1,
+  .safety-hero-pro h1 {
+    font-size: 32px !important;
+    line-height: 1.06 !important;
+  }
+
+  .safety-hero p,
+  .safety-hero-pro p,
+  .safety-section-title p,
+  .safety-detail-card p,
+  .safety-text-panel p,
+  .safety-rule-card p,
+  .safety-ban-list p {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+  }
+
+  .safety-nav {
+    gap: 8px !important;
+  }
+
+  .safety-nav button {
+    min-height: 39px !important;
+    padding: 9px 11px !important;
+    border-radius: 15px !important;
+    font-size: 12px !important;
+  }
+
+  .safety-wide-grid,
+  .safety-text-layout,
+  .safety-rules-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .safety-detail-card,
+  .safety-text-panel,
+  .safety-rule-card,
+  .safety-ban-list div {
+    padding: 18px 15px !important;
+  }
+
+  .admin-page,
+  .admin-section {
+    padding: 24px 12px 42px !important;
+  }
+
+  .admin-container h1,
+  .admin-section h1 {
+    font-size: 34px !important;
+  }
+
+  .admin-stats-grid,
+  .mini-stats,
+  .admin-form,
+  .create-form,
+  .admin-scooters {
+    grid-template-columns: 1fr !important;
+  }
+
+  .income-chart,
+  .admin-stat-card,
+  .admin-block,
+  .admin-users-card {
+    padding: 20px 14px !important;
+    border-radius: 24px !important;
+  }
+
+  .user-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .user-actions,
+  .admin-actions {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .user-actions button,
+  .admin-actions button {
+    width: 100% !important;
+  }
+
+  .footer {
+    margin-top: 18px !important;
+    padding: 42px 16px 34px !important;
+  }
+
+  .footer-content {
+    padding-top: 28px !important;
+  }
+
+  .footer-content h2 {
+    font-size: 32px !important;
+  }
+
+  .footer-content p {
+    font-size: 15px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .header {
+    padding: 12px 10px 14px !important;
+  }
+
+  .logo {
+    font-size: 26px !important;
+  }
+
+  nav {
+    gap: 7px !important;
+  }
+
+  .nav-button,
+  .header-user {
+    min-height: 40px !important;
+    padding: 9px 6px !important;
+    font-size: 13px !important;
+    border-radius: 15px !important;
+  }
+
+  .header-user-name {
+    font-size: 13px !important;
+  }
+
+  .header-user-balance {
+    font-size: 11px !important;
+  }
+
+  .hero h1 {
+    font-size: 34px !important;
+  }
+
+  .map-box {
+    height: 310px !important;
+    min-height: 310px !important;
+  }
+
+  .control-panel {
+    padding: 18px 14px !important;
+  }
+
+  .control-panel h3 {
+    font-size: 29px !important;
+  }
+
+  .info-grid strong {
+    font-size: 21px !important;
+  }
 }
