@@ -62,16 +62,22 @@ const refreshMapSize = () => {
   const [reserveSecondsLeft, setReserveSecondsLeft] = useState(0);
   const [showFinishedDetails, setShowFinishedDetails] = useState(false);
  const detectMobileMap = () => {
-  const width = Math.min(
+  const userAgent = navigator.userAgent || "";
+
+  const viewportWidth = Math.min(
     window.innerWidth || 9999,
-    window.screen?.width || 9999
+    document.documentElement.clientWidth || 9999
+  );
+
+  const screenSmallSide = Math.min(
+    window.screen?.width || 9999,
+    window.screen?.height || 9999
   );
 
   return (
-    width <= 1200 ||
-    window.matchMedia("(max-width: 1200px)").matches ||
-    window.matchMedia("(pointer: coarse)").matches ||
-    /Android|iPhone|iPad|iPod|Mobile|Telegram/i.test(navigator.userAgent)
+    viewportWidth <= 900 ||
+    screenSmallSide <= 600 ||
+    /Android|iPhone|iPad|iPod|Mobile|Telegram|Mail/i.test(userAgent)
   );
 };
 
@@ -522,7 +528,7 @@ setShowFinishedDetails(false);
         (a, b) =>
           getDistanceToSelected(a.coords) - getDistanceToSelected(b.coords)
       )
-      .slice(0, 2)
+      .slice(0, 3)
   : parkingZones;
 
 const visibleScooters = isMobileMap
@@ -535,7 +541,7 @@ const visibleScooters = isMobileMap
             getDistanceToSelected([a.latitude, a.longitude]) -
             getDistanceToSelected([b.latitude, b.longitude])
         )
-        .slice(0, 1),
+        .slice(0, 3),
     ]
   : scooters;
 
@@ -557,9 +563,9 @@ const visibleScooters = isMobileMap
           >
            <Map
   state={{
-    center: [selectedScooter.latitude, selectedScooter.longitude],
-    zoom: isMobileMap ? 12 : 11,
-  }}
+  center: [selectedScooter.latitude, selectedScooter.longitude],
+  zoom: isMobileMap ? 14 : 11,
+}}
   width="100%"
   height="100%"
   options={{
