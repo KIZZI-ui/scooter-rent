@@ -434,17 +434,51 @@ function App() {
     }
   };
 
-  const saveProfile = () => {
-    const updatedUser = {
-      ...user,
-      username: profileForm.username,
-      phone: profileForm.phone,
-    };
+  const saveProfile = async () => {
+    if (!user?.id) {
+      showMessage("Войдите в аккаунт", "error");
+      return;
+    }
 
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
+    const username = profileForm.username.trim();
+    const phone = profileForm.phone.trim();
 
-    showMessage("Профиль обновлён", "success");
+    if (!username) {
+      showMessage("Введите имя пользователя", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/users/${user.id}/profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          phone,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showMessage(data.message || "Ошибка сохранения профиля", "error");
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setUser(data.user);
+      setProfileForm({
+        username: data.user.username || "",
+        phone: data.user.phone || "",
+      });
+
+      showMessage("Профиль сохранён", "success");
+    } catch (error) {
+      console.log(error);
+      showMessage("Ошибка соединения с сервером", "error");
+    }
   };
 
   const sendSupport = () => {
@@ -564,7 +598,7 @@ function App() {
     const email = form.email.trim().toLowerCase();
 
     if (!isValidEmail(email)) {
-      showMessage("Введите корректный email", "error");
+      showMessage("Введите корректный email, например user@mail.ru", "error");
       return;
     }
 

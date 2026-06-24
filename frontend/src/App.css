@@ -6085,10 +6085,9 @@ button.reserve-button:hover,
     overflow: hidden !important;
   }
 
-  .map-box > div,
-  .map-box ymaps,
-  .map-box canvas {
+  .map-box > div {
     width: 100% !important;
+    height: 100% !important;
     max-width: 100% !important;
   }
 
@@ -6404,5 +6403,59 @@ button.reserve-button:hover,
 
   .info-grid strong {
     font-size: 21px !important;
+  }
+}
+
+
+/* FIX: Do not stretch internal Yandex Map marker elements on mobile.
+   Earlier CSS applied width:100% to every <ymaps> tag, including placemarks,
+   which caused scooter/parking icons to duplicate or line up incorrectly on phones. */
+@media (max-width: 900px) {
+  .map-box {
+    overflow: hidden !important;
+    touch-action: pan-x pan-y !important;
+  }
+
+  .map-box > div {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+/* MOBILE ONLY FIXES: larger scooter icons are in MapComponent.jsx.
+   These CSS rules do not affect desktop. */
+@media (max-width: 900px) {
+  .header {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 100000 !important;
+  }
+
+  .notification,
+  .map-message,
+  .custom-notification {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 420px !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    z-index: 1000002 !important;
+  }
+
+  .notification {
+    top: 16px !important;
+  }
+
+  .map-message,
+  .custom-notification {
+    top: 92px !important;
   }
 }

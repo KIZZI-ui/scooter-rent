@@ -642,17 +642,17 @@ options={{
                       iconImageHref: "/scooter.png",
                       iconImageSize: isSelected
                         ? isMobileMap
-                          ? [38, 38]
+                          ? [54, 54]
                           : [58, 58]
                         : isMobileMap
-                        ? [26, 26]
+                        ? [42, 42]
                         : [46, 46],
                       iconImageOffset: isSelected
                         ? isMobileMap
-                          ? [-19, -19]
+                          ? [-27, -27]
                           : [-29, -29]
                         : isMobileMap
-                        ? [-13, -13]
+                        ? [-21, -21]
                         : [-23, -23],
                       zIndex: isSelected ? 1000 : 10,
                     }}

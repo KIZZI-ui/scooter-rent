@@ -1,16 +1,15 @@
-const CACHE_NAME = "scooterrent-cache-v1";
+const CACHE_NAME = "scooterrent-pwa-v1";
 
-const APP_SHELL = [
+const STATIC_ASSETS = [
   "/",
   "/manifest.webmanifest",
-  "/favicon.svg",
   "/icons/icon-192.svg",
   "/icons/icon-512.svg"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
 
   self.skipWaiting();
@@ -31,21 +30,23 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const requestUrl = new URL(request.url);
+  const request = event.request;
+  const url = new URL(request.url);
 
   if (request.method !== "GET") {
     return;
   }
 
-  if (requestUrl.origin !== self.location.origin) {
-    return;
-  }
-
   if (
-    request.url.includes("localhost:5000") ||
-    request.url.includes("127.0.0.1:5000")
+    url.pathname.startsWith("/scooters") ||
+    url.pathname.startsWith("/rides") ||
+    url.pathname.startsWith("/auth") ||
+    url.pathname.startsWith("/users") ||
+    url.pathname.startsWith("/stats") ||
+    url.pathname.startsWith("/tariff") ||
+    url.pathname.startsWith("/admin-stats")
   ) {
+    event.respondWith(fetch(request));
     return;
   }
 
@@ -53,28 +54,12 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request).catch(() => caches.match("/"))
     );
-
     return;
   }
 
-  if (
-    request.destination === "image" ||
-    request.destination === "font" ||
-    request.url.includes("/manifest.webmanifest")
-  ) {
-    event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        return fetch(request).then((networkResponse) => {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, networkResponse.clone());
-            return networkResponse;
-          });
-        });
-      })
-    );
-  }
+  event.respondWith(
+    caches.match(request).then((cachedResponse) => {
+      return cachedResponse || fetch(request);
+    })
+  );
 });

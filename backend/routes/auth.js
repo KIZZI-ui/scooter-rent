@@ -8,13 +8,38 @@ const User = require("../models/User");
 
 const SECRET = "SUPER_SECRET_KEY";
 
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
+const isValidEmail = (email) => EMAIL_REGEX.test(normalizeEmail(email));
+
+const userResponse = (user) => ({
+  id: user.id,
+  username: user.username,
+  email: user.email,
+  phone: user.phone,
+  role: user.role,
+  balance: user.balance,
+  status: user.status,
+  blockReason: user.blockReason,
+});
+
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const username = String(req.body.username || "").trim();
+    const email = normalizeEmail(req.body.email);
+    const { password } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({
         message: "Заполни все поля",
+      });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        message:
+          "Введите корректный email на английском, например user@mail.ru или user@gmail.com",
       });
     }
 
@@ -39,13 +64,7 @@ router.post("/register", async (req, res) => {
 
     res.status(201).json({
       message: "Пользователь создан",
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        balance: user.balance,
-      },
+      user: userResponse(user),
     });
   } catch (error) {
     res.status(500).json({
@@ -57,11 +76,18 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const email = normalizeEmail(req.body.email);
+    const { password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
         message: "Введи email и пароль",
+      });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({
+        message: "Введите корректный email",
       });
     }
 
@@ -98,13 +124,7 @@ router.post("/login", async (req, res) => {
     res.json({
       message: "Вход выполнен",
       token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        balance: user.balance,
-      },
+      user: userResponse(user),
     });
   } catch (error) {
     res.status(500).json({

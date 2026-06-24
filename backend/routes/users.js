@@ -4,6 +4,17 @@ const router = express.Router();
 const User = require("../models/User");
 const Payment = require("../models/Payment");
 
+const userResponse = (user) => ({
+  id: user.id,
+  username: user.username,
+  email: user.email,
+  phone: user.phone,
+  role: user.role,
+  balance: user.balance,
+  status: user.status,
+  blockReason: user.blockReason,
+});
+
 router.put("/:id/topup", async (req, res) => {
   try {
     const { amount } = req.body;
@@ -28,17 +39,47 @@ router.put("/:id/topup", async (req, res) => {
 
     res.json({
       message: "Баланс пополнен",
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        balance: user.balance,
-      },
+      user: userResponse(user),
     });
   } catch (error) {
     res.status(500).json({
       message: "Ошибка пополнения баланса",
+      error: error.message,
+    });
+  }
+});
+
+router.put("/:id/profile", async (req, res) => {
+  try {
+    const username = String(req.body.username || "").trim();
+    const phone = String(req.body.phone || "").trim();
+
+    if (!username) {
+      return res.status(400).json({
+        message: "Введите имя пользователя",
+      });
+    }
+
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Пользователь не найден",
+      });
+    }
+
+    user.username = username;
+    user.phone = phone || null;
+
+    await user.save();
+
+    res.json({
+      message: "Профиль сохранён",
+      user: userResponse(user),
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Ошибка сохранения профиля",
       error: error.message,
     });
   }

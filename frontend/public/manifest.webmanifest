@@ -1,20 +1,24 @@
 {
   "name": "ScooterRent",
   "short_name": "ScooterRent",
-  "description": "Сервис аренды электросамокатов с картой, профилем, историей поездок и админ-панелью",
+  "description": "Аренда электросамокатов ScooterRent",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#020617",
-  "theme_color": "#34d399",
-  "lang": "ru-RU",
-  "categories": ["transport", "navigation", "travel"],
+  "background_color": "#050806",
+  "theme_color": "#6ee7b7",
   "icons": [
     {
-      "src": "/scooter.png",
-      "sizes": "1024x1024",
-      "type": "image/png",
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
