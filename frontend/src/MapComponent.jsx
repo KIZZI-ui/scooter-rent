@@ -55,6 +55,9 @@ const detectMobileMap = () => {
 
 function MapComponent() {
   const mapRef = useRef(null);
+  const mapSignatureRef = useRef("");
+  const rebuildTimerRef = useRef(null);
+  const [mapRevision, setMapRevision] = useState(0);
 
 const moveMapToScooter = (scooter) => {
   if (!mapRef.current || !scooter) return;
@@ -84,6 +87,18 @@ const refreshMapSize = () => {
   };
 
   requestAnimationFrame(animateResize);
+};
+
+const rebuildMap = () => {
+  if (rebuildTimerRef.current) {
+    clearTimeout(rebuildTimerRef.current);
+  }
+
+  setMapRevision((prev) => prev + 1);
+
+  rebuildTimerRef.current = setTimeout(() => {
+    refreshMapSize();
+  }, 250);
 };
 
   const [scooters, setScooters] = useState([]);
@@ -208,21 +223,42 @@ const parkingZones = [
     setTariff(data);
   };
 
-  const loadScooters = async () => {
-    const res = await fetch(`${API_URL}/scooters`);
-    const data = await res.json();
+  const loadScooters = async (forceRebuild = false) => {
+    try {
+      const res = await fetch(`${API_URL}/scooters`);
+      const data = await res.json();
 
-    setScooters(data);
+      const signature = [...data]
+        .sort((a, b) => a.id - b.id)
+        .map(
+          (scooter) =>
+            `${scooter.id}:${scooter.status}:${scooter.latitude}:${scooter.longitude}:${scooter.charge}`
+        )
+        .join("|");
 
-    setSelectedScooter((currentScooter) => {
-      if (!data.length) return null;
-
-      if (!currentScooter) {
-        return data[0];
+      if (
+        forceRebuild ||
+        (mapSignatureRef.current && mapSignatureRef.current !== signature)
+      ) {
+        rebuildMap();
       }
 
-      return data.find((s) => s.id === currentScooter.id) || data[0];
-    });
+      mapSignatureRef.current = signature;
+
+      setScooters(data);
+
+      setSelectedScooter((currentScooter) => {
+        if (!data.length) return null;
+
+        if (!currentScooter) {
+          return data[0];
+        }
+
+        return data.find((s) => s.id === currentScooter.id) || data[0];
+      });
+    } catch (error) {
+      console.log("Ошибка загрузки самокатов:", error);
+    }
   };
 
   const loadRides = async () => {
@@ -281,6 +317,10 @@ const parkingZones = [
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", handleResize);
+
+      if (rebuildTimerRef.current) {
+        clearTimeout(rebuildTimerRef.current);
+      }
     };
   }, []);
 
@@ -370,6 +410,8 @@ useEffect(() => {
 
       moveMapToScooter(data.scooter);
 
+      rebuildMap();
+
       setScooters((prev) =>
         prev.map((scooter) =>
           scooter.id === data.scooter.id ? data.scooter : scooter
@@ -390,6 +432,8 @@ useEffect(() => {
 
     if (selectedScooter.status !== "available") {
       showMessage("Этот самокат нельзя забронировать", "error");
+      await loadScooters(true);
+      rebuildMap();
       return;
     }
 
@@ -404,18 +448,21 @@ useEffect(() => {
 
     if (!response.ok) {
       showMessage(data.message || "Ошибка бронирования", "error");
+      await loadScooters(true);
+      rebuildMap();
       return;
     }
 
     setSelectedScooter(data.scooter);
-
-    refreshMapSize();
 
     setScooters((prev) =>
       prev.map((scooter) =>
         scooter.id === data.scooter.id ? data.scooter : scooter
       )
     );
+
+    await loadScooters(true);
+    rebuildMap();
 
     showMessage("Самокат забронирован на 5 минут", "success");
   };
@@ -444,6 +491,9 @@ useEffect(() => {
         scooter.id === data.scooter.id ? data.scooter : scooter
       )
     );
+
+    await loadScooters(true);
+    rebuildMap();
 
     showMessage("Бронирование отменено", "success");
   };
@@ -573,14 +623,14 @@ setShowFinishedDetails(false);
       <div className="rental-wrapper">
         <div className="map-box">
           <YMaps
-            key={isMobileMap ? `ymaps-mobile-${selectedScooter.id}` : "ymaps-desktop"}
+            key={`ymaps-${isMobileMap ? "mobile" : "desktop"}-${selectedScooter.id}-${mapRevision}`}
             query={{
               apikey: "656abd51-55c6-4c8a-821b-2fce7bdf5dc4",
               lang: "ru_RU",
             }}
           >
            <Map
-  key={isMobileMap ? `map-mobile-${selectedScooter.id}` : "map-desktop"}
+  key={`map-${isMobileMap ? "mobile" : "desktop"}-${selectedScooter.id}-${mapRevision}`}
   state={{
     center: [selectedScooter.latitude, selectedScooter.longitude],
     zoom: isMobileMap ? 14 : 11,
