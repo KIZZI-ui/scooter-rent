@@ -6090,12 +6090,6 @@ button.reserve-button:hover,
     overflow: hidden !important;
   }
 
-  .map-box > div,
-  .map-box ymaps,
-  .map-box canvas {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
 
   .control-panel {
     width: 100% !important;
@@ -6410,4 +6404,28 @@ button.reserve-button:hover,
   .info-grid strong {
     font-size: 21px !important;
   }
+}
+
+/* FIX: запрет растягивания внутренних элементов Яндекс.Карты */
+.map-box {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Размер задаём только контейнеру карты */
+.map-box > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Нельзя растягивать все ymaps — это ломает иконки */
+.map-box ymaps {
+  max-width: none !important;
+}
+
+/* Возвращаем нормальный размер меткам */
+.map-box ymaps[class*="placemark"],
+.map-box ymaps[class*="image"],
+.map-box img {
+  max-width: none !important;
 }
