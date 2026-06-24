@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { YMaps, Map, Placemark, Polygon } from "@pbe/react-yandex-maps";
 
-
 const API_URL = (() => {
   const hostname = window.location.hostname;
 
@@ -9,13 +8,50 @@ const API_URL = (() => {
     return "http://localhost:5000";
   }
 
-  if (hostname.startsWith("192.168.")) {
+  if (
+    hostname.startsWith("192.168.") ||
+    hostname.startsWith("10.") ||
+    hostname.startsWith("172.")
+  ) {
     return `http://${hostname}:5000`;
   }
 
   return window.location.origin;
 })();
 
+const detectMobileMap = () => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("desktop") === "1") return false;
+  if (params.get("mobile") === "1") return true;
+
+  const userAgent = navigator.userAgent || "";
+
+  const viewportWidth =
+    window.visualViewport?.width ||
+    window.innerWidth ||
+    document.documentElement.clientWidth ||
+    9999;
+
+  const screenSmallSide = Math.min(
+    window.screen?.width || 9999,
+    window.screen?.height || 9999
+  );
+
+  const hasTouch =
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia?.("(pointer: coarse)").matches ||
+    "ontouchstart" in window;
+
+  return (
+    viewportWidth <= 900 ||
+    screenSmallSide <= 900 ||
+    (hasTouch && screenSmallSide <= 1200) ||
+    /Android|iPhone|iPad|iPod|Mobile|Telegram|Mail|CriOS|FxiOS|YaBrowser/i.test(
+      userAgent
+    )
+  );
+};
 
 function MapComponent() {
   const mapRef = useRef(null);
@@ -61,26 +97,6 @@ const refreshMapSize = () => {
   const [messageType, setMessageType] = useState("success");
   const [reserveSecondsLeft, setReserveSecondsLeft] = useState(0);
   const [showFinishedDetails, setShowFinishedDetails] = useState(false);
- const detectMobileMap = () => {
-  const userAgent = navigator.userAgent || "";
-
-  const viewportWidth = Math.min(
-    window.innerWidth || 9999,
-    document.documentElement.clientWidth || 9999
-  );
-
-  const screenSmallSide = Math.min(
-    window.screen?.width || 9999,
-    window.screen?.height || 9999
-  );
-
-  return (
-    viewportWidth <= 900 ||
-    screenSmallSide <= 600 ||
-    /Android|iPhone|iPad|iPod|Mobile|Telegram|Mail/i.test(userAgent)
-  );
-};
-
   const [isMobileMap, setIsMobileMap] = useState(detectMobileMap);
 
   const [tariff, setTariff] = useState({
@@ -255,21 +271,21 @@ const parkingZones = [
 };
 
   useEffect(() => {
-  const handleResize = () => {
-    setIsMobileMap(detectMobileMap());
-    setTimeout(refreshMapSize, 150);
-  };
+    const handleResize = () => {
+      setIsMobileMap(detectMobileMap());
+      setTimeout(refreshMapSize, 150);
+    };
 
-  handleResize();
+    handleResize();
 
-  window.addEventListener("resize", handleResize);
-  window.addEventListener("orientationchange", handleResize);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
 
-  return () => {
-    window.removeEventListener("resize", handleResize);
-    window.removeEventListener("orientationchange", handleResize);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     loadTariff();
@@ -297,14 +313,6 @@ const parkingZones = [
 useEffect(() => {
   refreshMapSize();
 }, [showFinishedDetails, finishedRide]);
-
-useEffect(() => {
-  const timer = setTimeout(() => {
-    refreshMapSize();
-  }, 250);
-
-  return () => clearTimeout(timer);
-}, [isMobileMap, selectedScooter?.id]);
 
   useEffect(() => {
     if (!selectedScooter?.reservedUntil || selectedScooter.status !== "reserved") {
@@ -523,27 +531,27 @@ setShowFinishedDetails(false);
   };
 
   const visibleParkingZones = isMobileMap
-  ? [...parkingZones]
-      .sort(
-        (a, b) =>
-          getDistanceToSelected(a.coords) - getDistanceToSelected(b.coords)
-      )
-      .slice(0, 3)
-  : parkingZones;
-
-const visibleScooters = isMobileMap
-  ? [
-      selectedScooter,
-      ...scooters
-        .filter((scooter) => scooter.id !== selectedScooter.id)
+    ? [...parkingZones]
         .sort(
           (a, b) =>
-            getDistanceToSelected([a.latitude, a.longitude]) -
-            getDistanceToSelected([b.latitude, b.longitude])
+            getDistanceToSelected(a.coords) - getDistanceToSelected(b.coords)
         )
-        .slice(0, 3),
-    ]
-  : scooters;
+        .slice(0, 3)
+    : parkingZones;
+
+  const visibleScooters = isMobileMap
+    ? [
+        selectedScooter,
+        ...scooters
+          .filter((scooter) => scooter.id !== selectedScooter?.id)
+          .sort(
+            (a, b) =>
+              getDistanceToSelected([a.latitude, a.longitude]) -
+              getDistanceToSelected([b.latitude, b.longitude])
+          )
+          .slice(0, 3),
+      ].filter(Boolean)
+    : scooters;
 
   if (!selectedScooter) {
     return <div className="loading">Загрузка карты...</div>;
@@ -556,16 +564,18 @@ const visibleScooters = isMobileMap
       <div className="rental-wrapper">
         <div className="map-box">
           <YMaps
+            key={isMobileMap ? `ymaps-mobile-${selectedScooter.id}` : "ymaps-desktop"}
             query={{
               apikey: "656abd51-55c6-4c8a-821b-2fce7bdf5dc4",
               lang: "ru_RU",
             }}
           >
            <Map
+  key={isMobileMap ? `map-mobile-${selectedScooter.id}` : "map-desktop"}
   state={{
-  center: [selectedScooter.latitude, selectedScooter.longitude],
-  zoom: isMobileMap ? 14 : 11,
-}}
+    center: [selectedScooter.latitude, selectedScooter.longitude],
+    zoom: isMobileMap ? 14 : 11,
+  }}
   width="100%"
   height="100%"
   options={{
@@ -592,8 +602,8 @@ const visibleScooters = isMobileMap
     options={{
       iconLayout: "default#image",
       iconImageHref: "/parking.png",
-      iconImageSize: isMobileMap ? [22, 22] : [42, 42],
-      iconImageOffset: isMobileMap ? [-11, -22] : [-21, -42],
+      iconImageSize: isMobileMap ? [30, 30] : [42, 42],
+      iconImageOffset: isMobileMap ? [-15, -30] : [-21, -42],
       cursor: "pointer",
     }}
   />
@@ -631,17 +641,24 @@ options={{
                       iconLayout: "default#image",
                       iconImageHref: "/scooter.png",
                       iconImageSize: isSelected
-                        ? isMobileMap ? [30, 30] : [58, 58]
-                        : isMobileMap ? [16, 16] : [46, 46],
+                        ? isMobileMap
+                          ? [38, 38]
+                          : [58, 58]
+                        : isMobileMap
+                        ? [26, 26]
+                        : [46, 46],
                       iconImageOffset: isSelected
-                        ? isMobileMap ? [-15, -15] : [-29, -29]
-                        : isMobileMap ? [-8, -8] : [-23, -23],
+                        ? isMobileMap
+                          ? [-19, -19]
+                          : [-29, -29]
+                        : isMobileMap
+                        ? [-13, -13]
+                        : [-23, -23],
                       zIndex: isSelected ? 1000 : 10,
                     }}
                   />
                 );
               })}
-
             </Map>
           </YMaps>
         </div>
