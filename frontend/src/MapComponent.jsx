@@ -55,21 +55,9 @@ const detectMobileMap = () => {
 
 function MapComponent() {
   const mapRef = useRef(null);
-  const mapSignatureRef = useRef("");
-  const rebuildTimerRef = useRef(null);
-  const [mapRevision, setMapRevision] = useState(0);
 
-const moveMapToScooter = (scooter) => {
-  if (!mapRef.current || !scooter) return;
-
-  mapRef.current.panTo(
-    [scooter.latitude, scooter.longitude],
-    {
-      flying: true,
-      duration: 800,
-    }
-  );
-};
+// Без “магнита”: карта больше не прыгает к самокату при автообновлении.
+const moveMapToScooter = () => {};
 
 const refreshMapSize = () => {
   if (!mapRef.current) return;
@@ -89,17 +77,6 @@ const refreshMapSize = () => {
   requestAnimationFrame(animateResize);
 };
 
-const rebuildMap = () => {
-  if (rebuildTimerRef.current) {
-    clearTimeout(rebuildTimerRef.current);
-  }
-
-  setMapRevision((prev) => prev + 1);
-
-  rebuildTimerRef.current = setTimeout(() => {
-    refreshMapSize();
-  }, 250);
-};
 
   const [scooters, setScooters] = useState([]);
   const [selectedScooter, setSelectedScooter] = useState(null);
@@ -223,27 +200,10 @@ const parkingZones = [
     setTariff(data);
   };
 
-  const loadScooters = async (forceRebuild = false) => {
+  const loadScooters = async () => {
     try {
       const res = await fetch(`${API_URL}/scooters`);
       const data = await res.json();
-
-      const signature = [...data]
-        .sort((a, b) => a.id - b.id)
-        .map(
-          (scooter) =>
-            `${scooter.id}:${scooter.status}:${scooter.latitude}:${scooter.longitude}:${scooter.charge}`
-        )
-        .join("|");
-
-      if (
-        forceRebuild ||
-        (mapSignatureRef.current && mapSignatureRef.current !== signature)
-      ) {
-        rebuildMap();
-      }
-
-      mapSignatureRef.current = signature;
 
       setScooters(data);
 
@@ -317,10 +277,6 @@ const parkingZones = [
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", handleResize);
-
-      if (rebuildTimerRef.current) {
-        clearTimeout(rebuildTimerRef.current);
-      }
     };
   }, []);
 
@@ -408,9 +364,6 @@ useEffect(() => {
 
       refreshMapSize();
 
-      moveMapToScooter(data.scooter);
-
-      rebuildMap();
 
       setScooters((prev) =>
         prev.map((scooter) =>
@@ -432,8 +385,7 @@ useEffect(() => {
 
     if (selectedScooter.status !== "available") {
       showMessage("Этот самокат нельзя забронировать", "error");
-      await loadScooters(true);
-      rebuildMap();
+      await loadScooters();
       return;
     }
 
@@ -448,8 +400,7 @@ useEffect(() => {
 
     if (!response.ok) {
       showMessage(data.message || "Ошибка бронирования", "error");
-      await loadScooters(true);
-      rebuildMap();
+      await loadScooters();
       return;
     }
 
@@ -461,8 +412,7 @@ useEffect(() => {
       )
     );
 
-    await loadScooters(true);
-    rebuildMap();
+    await loadScooters();
 
     showMessage("Самокат забронирован на 5 минут", "success");
   };
@@ -492,8 +442,7 @@ useEffect(() => {
       )
     );
 
-    await loadScooters(true);
-    rebuildMap();
+    await loadScooters();
 
     showMessage("Бронирование отменено", "success");
   };
@@ -623,15 +572,15 @@ setShowFinishedDetails(false);
       <div className="rental-wrapper">
         <div className="map-box">
           <YMaps
-            key={`ymaps-${isMobileMap ? "mobile" : "desktop"}-${selectedScooter.id}-${mapRevision}`}
+            key={`ymaps-${isMobileMap ? "mobile" : "desktop"}`}
             query={{
               apikey: "656abd51-55c6-4c8a-821b-2fce7bdf5dc4",
               lang: "ru_RU",
             }}
           >
            <Map
-  key={`map-${isMobileMap ? "mobile" : "desktop"}-${selectedScooter.id}-${mapRevision}`}
-  state={{
+  key={`map-${isMobileMap ? "mobile" : "desktop"}`}
+  defaultState={{
     center: [selectedScooter.latitude, selectedScooter.longitude],
     zoom: isMobileMap ? 14 : 11,
   }}
@@ -701,17 +650,17 @@ options={{
                       iconImageHref: "/scooter.png",
                       iconImageSize: isSelected
                         ? isMobileMap
-                          ? [38, 38]
+                          ? [52, 52]
                           : [58, 58]
                         : isMobileMap
-                        ? [26, 26]
+                        ? [38, 38]
                         : [46, 46],
                       iconImageOffset: isSelected
                         ? isMobileMap
-                          ? [-19, -19]
+                          ? [-26, -26]
                           : [-29, -29]
                         : isMobileMap
-                        ? [-13, -13]
+                        ? [-19, -19]
                         : [-23, -23],
                       zIndex: isSelected ? 1000 : 10,
                     }}
