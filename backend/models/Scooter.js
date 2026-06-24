@@ -31,6 +31,11 @@ const Scooter = sequelize.define("Scooter", {
     type: DataTypes.DATE,
     allowNull: true,
   },
+
+  reservedByUserId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 });
 
 module.exports = Scooter;

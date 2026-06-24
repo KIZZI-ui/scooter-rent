@@ -2,7 +2,28 @@ const express = require("express");
 const router = express.Router();
 
 const Scooter = require("../models/Scooter");
+const User = require("../models/User");
 const adminOnly = require("../middleware/adminOnly");
+
+const clearReservation = (scooter) => {
+  scooter.status = "available";
+  scooter.reservedUntil = null;
+  scooter.reservedByUserId = null;
+};
+
+const normalizeExpiredReservation = async (scooter) => {
+  const now = new Date();
+
+  if (
+    scooter.status === "reserved" &&
+    (!scooter.reservedByUserId ||
+      !scooter.reservedUntil ||
+      new Date(scooter.reservedUntil) < now)
+  ) {
+    clearReservation(scooter);
+    await scooter.save();
+  }
+};
 
 router.get("/", async (req, res) => {
   try {
@@ -10,18 +31,8 @@ router.get("/", async (req, res) => {
       order: [["id", "ASC"]],
     });
 
-    const now = new Date();
-
     for (const scooter of scooters) {
-      if (
-        scooter.status === "reserved" &&
-        scooter.reservedUntil &&
-        new Date(scooter.reservedUntil) < now
-      ) {
-        scooter.status = "available";
-        scooter.reservedUntil = null;
-        await scooter.save();
-      }
+      await normalizeExpiredReservation(scooter);
     }
 
     const updatedScooters = await Scooter.findAll({
@@ -48,6 +59,7 @@ router.post("/", adminOnly, async (req, res) => {
       longitude,
       status,
       reservedUntil: null,
+      reservedByUserId: null,
     });
 
     res.status(201).json(scooter);
@@ -61,6 +73,22 @@ router.post("/", adminOnly, async (req, res) => {
 
 router.post("/:id/reserve", async (req, res) => {
   try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Войдите в аккаунт, чтобы забронировать самокат",
+      });
+    }
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Пользователь не найден",
+      });
+    }
+
     const scooter = await Scooter.findByPk(req.params.id);
 
     if (!scooter) {
@@ -69,9 +97,12 @@ router.post("/:id/reserve", async (req, res) => {
       });
     }
 
+    await normalizeExpiredReservation(scooter);
+
     if (scooter.status !== "available") {
       return res.status(400).json({
         message: "Самокат сейчас недоступен для бронирования",
+        scooter,
       });
     }
 
@@ -79,6 +110,7 @@ router.post("/:id/reserve", async (req, res) => {
 
     scooter.status = "reserved";
     scooter.reservedUntil = reservedUntil;
+    scooter.reservedByUserId = user.id;
 
     await scooter.save();
 
@@ -96,6 +128,7 @@ router.post("/:id/reserve", async (req, res) => {
 
 router.post("/:id/cancel-reserve", async (req, res) => {
   try {
+    const { userId } = req.body;
     const scooter = await Scooter.findByPk(req.params.id);
 
     if (!scooter) {
@@ -104,14 +137,23 @@ router.post("/:id/cancel-reserve", async (req, res) => {
       });
     }
 
+    await normalizeExpiredReservation(scooter);
+
     if (scooter.status !== "reserved") {
       return res.status(400).json({
         message: "Самокат не забронирован",
+        scooter,
       });
     }
 
-    scooter.status = "available";
-    scooter.reservedUntil = null;
+    if (!userId || Number(scooter.reservedByUserId) !== Number(userId)) {
+      return res.status(403).json({
+        message: "Эта бронь принадлежит другому пользователю",
+        scooter,
+      });
+    }
+
+    clearReservation(scooter);
 
     await scooter.save();
 
@@ -129,7 +171,7 @@ router.post("/:id/cancel-reserve", async (req, res) => {
 
 router.put("/:id/status", async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, userId } = req.body;
 
     const scooter = await Scooter.findByPk(req.params.id);
 
@@ -139,10 +181,35 @@ router.put("/:id/status", async (req, res) => {
       });
     }
 
-    scooter.status = status;
+    await normalizeExpiredReservation(scooter);
 
-    if (status !== "reserved") {
+    if (status === "busy") {
+      if (scooter.status !== "reserved") {
+        return res.status(400).json({
+          message: "Сначала забронируйте самокат",
+          scooter,
+        });
+      }
+
+      if (!userId || Number(scooter.reservedByUserId) !== Number(userId)) {
+        return res.status(403).json({
+          message: "Этот самокат забронирован другим пользователем",
+          scooter,
+        });
+      }
+
+      scooter.status = "busy";
       scooter.reservedUntil = null;
+      scooter.reservedByUserId = null;
+    } else if (status === "available") {
+      clearReservation(scooter);
+    } else {
+      scooter.status = status;
+
+      if (status !== "reserved") {
+        scooter.reservedUntil = null;
+        scooter.reservedByUserId = null;
+      }
     }
 
     await scooter.save();

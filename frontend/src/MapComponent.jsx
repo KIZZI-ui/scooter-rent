@@ -105,6 +105,22 @@ const refreshMapSize = () => {
     repair: "Ремонт",
   };
 
+  const getCurrentUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const isReservedByCurrentUser = (scooter, user = getCurrentUser()) => {
+    if (!scooter || scooter.status !== "reserved" || !user?.id) {
+      return false;
+    }
+
+    return Number(scooter.reservedByUserId) === Number(user.id);
+  };
+
   const redZones = [
   {
     name: "Красная площадь",
@@ -344,12 +360,17 @@ useEffect(() => {
   }, [selectedScooter]);
 
   const updateScooterStatus = async (id, status) => {
+    const currentUser = getCurrentUser();
+
     const response = await fetch(`${API_URL}/scooters/${id}/status`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({
+        status,
+        userId: currentUser?.id,
+      }),
     });
 
     const data = await response.json();
@@ -376,7 +397,7 @@ useEffect(() => {
   };
 
   const reserveScooter = async () => {
-    const currentUser = JSON.parse(localStorage.getItem("user"));
+    const currentUser = getCurrentUser();
 
     if (!currentUser) {
       showMessage("Войдите в аккаунт, чтобы забронировать самокат", "error");
@@ -393,6 +414,12 @@ useEffect(() => {
       `${API_URL}/scooters/${selectedScooter.id}/reserve`,
       {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+        }),
       }
     );
 
@@ -418,10 +445,29 @@ useEffect(() => {
   };
 
   const cancelReserve = async () => {
+    const currentUser = getCurrentUser();
+
+    if (!currentUser) {
+      showMessage("Войдите в аккаунт", "error");
+      return;
+    }
+
+    if (!isReservedByCurrentUser(selectedScooter, currentUser)) {
+      showMessage("Эта бронь принадлежит другому пользователю", "error");
+      await loadScooters();
+      return;
+    }
+
     const response = await fetch(
       `${API_URL}/scooters/${selectedScooter.id}/cancel-reserve`,
       {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+        }),
       }
     );
 
@@ -448,7 +494,7 @@ useEffect(() => {
   };
 
   const startRide = async () => {
-    const currentUser = JSON.parse(localStorage.getItem("user"));
+    const currentUser = getCurrentUser();
 
     if (!currentUser) {
       showMessage("Войдите в аккаунт, чтобы начать поездку", "error");
@@ -457,6 +503,12 @@ useEffect(() => {
 
     if (selectedScooter.status !== "reserved") {
       showMessage("Сначала забронируйте самокат", "error");
+      return;
+    }
+
+    if (!isReservedByCurrentUser(selectedScooter, currentUser)) {
+      showMessage("Этот самокат забронирован другим пользователем", "error");
+      await loadScooters();
       return;
     }
 
@@ -560,6 +612,14 @@ setShowFinishedDetails(false);
           .slice(0, 3),
       ].filter(Boolean)
     : scooters;
+
+  const currentUser = getCurrentUser();
+  const selectedReservedByCurrentUser = isReservedByCurrentUser(
+    selectedScooter,
+    currentUser
+  );
+  const selectedReservedByAnotherUser =
+    selectedScooter?.status === "reserved" && !selectedReservedByCurrentUser;
 
   if (!selectedScooter) {
     return <div className="loading">Загрузка карты...</div>;
@@ -724,9 +784,9 @@ options={{
             </button>
           )}
 
-          {!rideStarted && selectedScooter.status === "reserved" && (
+          {!rideStarted && selectedReservedByCurrentUser && (
             <div className="reserve-panel">
-              <div className="reserve-title">Самокат забронирован</div>
+              <div className="reserve-title">Ваш самокат забронирован</div>
 
               <div className="reserve-time">
                 Осталось: {Math.floor(reserveSecondsLeft / 60)}:
@@ -741,6 +801,12 @@ options={{
                 Отменить бронь
               </button>
             </div>
+          )}
+
+          {!rideStarted && selectedReservedByAnotherUser && (
+            <button className="start-button" disabled>
+              Самокат забронирован другим пользователем
+            </button>
           )}
 
           {!rideStarted &&
