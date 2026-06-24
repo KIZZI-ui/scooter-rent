@@ -214,18 +214,15 @@ const parkingZones = [
 
     setScooters(data);
 
-    if (!selectedScooter && data.length > 0) {
-      setSelectedScooter(data[0]);
-      return;
-    }
+    setSelectedScooter((currentScooter) => {
+      if (!data.length) return null;
 
-    if (selectedScooter) {
-      const updated = data.find((s) => s.id === selectedScooter.id);
-
-      if (updated) {
-        setSelectedScooter(updated);
+      if (!currentScooter) {
+        return data[0];
       }
-    }
+
+      return data.find((s) => s.id === currentScooter.id) || data[0];
+    });
   };
 
   const loadRides = async () => {
@@ -288,9 +285,21 @@ const parkingZones = [
   }, []);
 
   useEffect(() => {
-    loadTariff();
-    loadScooters();
-    loadRides();
+    const loadSiteData = async () => {
+      await Promise.all([
+        loadTariff(),
+        loadScooters(),
+        loadRides(),
+      ]);
+    };
+
+    loadSiteData();
+
+    const interval = setInterval(() => {
+      loadSiteData();
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -642,17 +651,17 @@ options={{
                       iconImageHref: "/scooter.png",
                       iconImageSize: isSelected
                         ? isMobileMap
-                          ? [54, 54]
+                          ? [38, 38]
                           : [58, 58]
                         : isMobileMap
-                        ? [42, 42]
+                        ? [26, 26]
                         : [46, 46],
                       iconImageOffset: isSelected
                         ? isMobileMap
-                          ? [-27, -27]
+                          ? [-19, -19]
                           : [-29, -29]
                         : isMobileMap
-                        ? [-21, -21]
+                        ? [-13, -13]
                         : [-23, -23],
                       zIndex: isSelected ? 1000 : 10,
                     }}

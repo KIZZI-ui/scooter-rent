@@ -88,6 +88,7 @@ function AdminPanel() {
 
   const statusText = {
     available: "Свободен",
+    reserved: "Забронирован",
     busy: "Занят",
     repair: "Ремонт",
   };
@@ -132,17 +133,23 @@ const loadUsers = async () => {
   };
 
   useEffect(() => {
-  loadScooters();
-  loadTariff();
-  loadStats();
-  loadUsers();
+    const loadAdminData = async () => {
+      await Promise.all([
+        loadScooters(),
+        loadTariff(),
+        loadStats(),
+        loadUsers(),
+      ]);
+    };
 
-  const interval = setInterval(() => {
-    loadUsers();
-  }, 3000);
+    loadAdminData();
 
-  return () => clearInterval(interval);
-}, []);
+    const interval = setInterval(() => {
+      loadAdminData();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
 const blockUser = async (id) => {
   const response = await fetch(`${API_URL}/users/${id}/block`, {
@@ -274,6 +281,8 @@ const unblockUser = async (id) => {
     });
 
     if (response.ok) {
+      await loadTariff();
+      await loadStats();
       showNotification("Тариф успешно обновлён");
     } else {
       showNotification("Ошибка обновления тарифа");
